@@ -1,0 +1,216 @@
+plugins {
+    id "application"
+    id "java-library"
+    id "com.github.johnrengelman.shadow" version "8.1.1"
+}
+
+repositories {
+    ivy {
+        name "Cosmic Reach"
+        url "https://cosmic-archive.netlify.app/"
+        patternLayout {
+            artifact "/Cosmic Reach-[revision].jar"
+        }
+        // This is required in Gradle 6.0+ as metadata file (ivy.xml) is mandatory
+        metadataSources {
+            artifact()
+        }
+
+        content {
+            includeGroup "finalforeach"
+        }
+    }
+    ivy {
+        // The game provider for Fabric (equivalent of Cosmic Quilt for Fabric)
+        name "Galactic Loader"
+        url "https://github.com/GalacticLoader/GalacticLoader/releases/download/"
+        patternLayout {
+            artifact "/[revision]/GalacticLoader-[revision].jar"
+        }
+        // This is required in Gradle 6.0+ as metadata file (ivy.xml) is mandatory
+        metadataSources {
+            artifact()
+        }
+
+        content {
+            includeGroup "galacticloader"
+        }
+    }
+
+    maven {
+        name "crmoddersRepoReleases"
+        url "https://maven.crmodders.dev/releases"
+    }
+
+    maven {
+        name "JitPack"
+        url "https://jitpack.io"
+    }
+    maven {
+        name "Quilt"
+        url "https://maven.quiltmc.org/repository/release"
+    }
+    maven {
+        name "Fabric"
+        url "https://maven.fabricmc.net/"
+    }
+    maven {
+        name "Sponge"
+        url "https://repo.spongepowered.org/maven/"
+    }
+
+    mavenCentral()
+}
+
+
+configurations {
+    cosmicreach // Config to provide the Cosmic Reach project
+    compileOnly.extendsFrom(cosmicreach) // Allows cosmic reach to be used in the codebase
+
+    shadowMe // Allows specifying which stuff gets shadowed
+    api.extendsFrom(shadowMe)
+
+    internal { // Allows to include something without it being in the maven
+        visible = false
+        canBeConsumed = false
+        canBeResolved = false
+    }
+    compileClasspath.extendsFrom(internal)
+    runtimeClasspath.extendsFrom(internal)
+    testCompileClasspath.extendsFrom(internal)
+    testRuntimeClasspath.extendsFrom(internal)
+
+
+    gameMod // Config to be able to load Fabric Mods (Quilt loads mods from the classpath)
+    internal.extendsFrom(gameMod)
+}
+
+shadowJar {
+    configurations = [project.configurations.shadowMe]
+    archiveFileName = "${name}-${version}.jar"
+    mainClassName = "dev.crmodders.flux.FluxAPI"
+}
+
+dependencies {
+    // Cosmic Reach jar
+    cosmicreach("finalforeach:cosmicreach:${cosmic_reach_version}")
+
+    // Fabric Loader (for accessing its stuff in the code)
+    compileOnly("net.fabricmc:fabric-loader:${fabric_loader_version}") // Include the base Fabric Loader so we can only use classes from that
+    compileOnly("net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5")
+    compileOnly("io.github.llamalad7:mixinextras-fabric:0.3.5")
+
+    // FluxAPI
+    gameMod("dev.crmodders:fluxapi:${flux_version}")
+
+}
+
+processResources {
+    def resourceTargets = [ // Locations of where to inject the properties
+                            "fabric.mod.json",
+                            "quilt.mod.json"
+    ]
+
+    // Left item is the name in the target, right is the variable name
+    def replaceProperties = [
+            "mod_version"     : project.version,
+            "mod_name"        : project.name,
+            "mod_id"          : id,
+            "mod_desc"        : description,
+            "mod_group"       : project.group,
+            "cosmic_reach_version"        : cosmic_reach_version,
+    ]
+
+
+    inputs.properties replaceProperties
+    replaceProperties.put "project", project
+    filesMatching(resourceTargets) {
+        expand replaceProperties
+    }
+}
+
+
+// Sets up all the fabric mods (quilt's mods are gotten through the classpath)
+static def String getModLocations(Configuration config) {
+    StringBuilder sb = new StringBuilder()
+    for (obj in config.allDependencies) {
+        sb.append(File.pathSeparator + config.files(obj)[0])
+    }
+    return sb.toString()
+}
+
+// Sets the current working path
+static def void setCurWorkingDir(Task curTask) {
+    // Change the run directory
+    File runningDir = new File("run/")
+    if (!runningDir.exists())
+        runningDir.mkdirs()
+    curTask.workingDir = runningDir
+}
+
+tasks.register("runQuilt", JavaExec) {
+    group = "runs" // Sets the task's group
+    dependsOn "shadowJar" // To run this project in the game, depend on the creation of jar task
+
+    dependencies {
+        // Cosmic Quilt
+        implementation("org.codeberg.CRModders:cosmic-quilt:${cosmic_quilt_version}")
+    }
+
+
+    jvmArgs = [
+            "-Dloader.gameJarPath=" + configurations.cosmicreach.asPath, // Defines path to Cosmic Reach
+            "-Dloader.addMods=" +
+                    shadowJar.archiveFile.get().asFile + // Add the jar of this project (using shadow on Fabric)
+                    getModLocations(configurations.gameMod) // Adds the jars of any Quilt or Fabric mods added (only needed for Fabric as it doesnt load stuff from classpath)
+    ]
+
+    setCurWorkingDir(tasks.runQuilt)
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = "org.quiltmc.loader.impl.launch.knot.KnotClient" // Quilt's main class
+}
+
+tasks.register("runFabric", JavaExec) {
+    group = "runs" // Sets the task's group
+    dependsOn "shadowJar" // Fabric doesnt search classpaths correctly, so we use the shadowed jar
+
+    dependencies {
+        // Galactic Loader
+        implementation("galacticloader:galacticloader:${fabric_loader_version}")
+
+        // Fabric Loader and its stuff
+        implementation("net.fabricmc:fabric-loader:${fabric_loader_version}")
+        implementation("net.fabricmc:tiny-mappings-parser:0.2.2.14")
+        implementation("net.fabricmc:access-widener:2.1.0")
+        implementation("net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5")
+        implementation("org.ow2.asm:asm:9.6")
+        implementation("org.ow2.asm:asm-util:9.6")
+        implementation("org.ow2.asm:asm-tree:9.6")
+        implementation("org.ow2.asm:asm-analysis:9.6")
+        implementation("org.ow2.asm:asm-commons:9.6")
+        implementation("io.github.llamalad7:mixinextras-fabric:0.3.5")
+    }
+
+    jvmArgs = [
+            "-Dfabric.skipMcProvider=true", // Stops Fabric from attempting to find mappings, and all the other Minecraft stuff
+            "-Dfabric.gameJarPath=" + configurations.cosmicreach.asPath, // Defines path to Cosmic Reach
+            "-Dfabric.addMods=" +
+                    shadowJar.archiveFile.get().asFile + // Add the jar of this project (using shadow on Fabric)
+                    getModLocations(configurations.gameMod) // Adds the jars of any Quilt or Fabric mods added (only needed for Fabric as it doesnt load stuff from classpath)
+    ]
+
+    setCurWorkingDir(tasks.runFabric)
+    classpath = sourceSets.main.runtimeClasspath // Loads all the classpaths
+    mainClass = "net.fabricmc.loader.impl.launch.knot.KnotClient" // Fabric's main class
+}
+
+
+
+java {
+    withSourcesJar()
+    // withJavadocJar() // If docs are included with the project, this line can be un-commented
+
+    // Sets the Java version
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}

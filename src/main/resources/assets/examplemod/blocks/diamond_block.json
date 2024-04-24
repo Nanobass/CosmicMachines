@@ -1,0 +1,17 @@
+{
+  "stringId": "examplemod:example_block_two",
+  "blockStates":
+  {
+    "default":
+    {
+      "modelName": "examplemod:diamond_block",
+      "isOpaque":true,
+      "isTransparent":false,
+      "lightAttenuation":15,
+      "lightLevelRed": 0,
+      "lightLevelGreen": 0,
+      "lightLevelBlue": 0,
+      "generateSlabs": false
+    }
+  }
+}

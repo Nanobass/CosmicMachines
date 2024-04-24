@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "${mod_desc}",
+  "authors": [
+    "IDK"
+  ],
+  "contact": {
+    "issues": "",
+    "sources": ""
+  },
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "org.example.mod.ExampleMod"
+    ]
+  },
+  "mixins": [
+    "example.mixins.json"
+  ],
+  "depends": {
+    "cosmic_reach": ">=${cosmic_reach_version}"
+  }
+}

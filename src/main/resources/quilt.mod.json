@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+
+  "quilt_loader": {
+    "group": "${mod_group}",
+    "id": "${mod_id}",
+    "version": "${mod_version}",
+
+    "intermediate_mappings":"net.fabricmc:intermediary",
+
+    "metadata": {
+      "name": "${mod_name}",
+      "description": "${mod_desc}",
+      "contributors": {
+        "IDK": "Owner"
+      },
+
+      "contact": {
+        "issues": "",
+        "sources": ""
+      }
+    },
+
+    "entrypoints": {
+      "main": "org.example.mod.ExampleMod"
+    },
+
+    "depends": [
+      {
+        "id": "cosmicquilt",
+        "versions": "*"
+      },
+      {
+        "id": "cosmicreach",
+        "versions": ">=${cosmic_reach_version}"
+      }
+    ]
+  },
+
+  "mixin": "example.mixins.json"
+}
