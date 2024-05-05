@@ -59,6 +59,10 @@ repositories {
         url "https://repo.spongepowered.org/maven/"
     }
 
+    flatDir {
+        dirs "C:\\Users\\mwsch\\IdeaProjects\\FluxAPI\\build\\libs"
+    }
+
     mavenCentral()
 }
 
@@ -102,6 +106,8 @@ dependencies {
 
     // FluxAPI
     gameMod("dev.crmodders:fluxapi:${flux_version}")
+
+    shadowMe("com.github.Querz:NBT:6.1");
 
 }
 

@@ -12,7 +12,7 @@
       "name": "${mod_name}",
       "description": "${mod_desc}",
       "contributors": {
-        "IDK": "Owner"
+        "Nanobass": "Owner"
       },
 
       "contact": {
@@ -22,7 +22,7 @@
     },
 
     "entrypoints": {
-      "main": "org.example.mod.ExampleMod"
+      "main": "net.paxyinc.machines.MachineMod"
     },
 
     "depends": [
@@ -37,5 +37,5 @@
     ]
   },
 
-  "mixin": "example.mixins.json"
+  "mixin": "cosmicmachines.mixins.json"
 }

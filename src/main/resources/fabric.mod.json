@@ -14,11 +14,11 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "org.example.mod.ExampleMod"
+      "net.paxyinc.machines.MachineMod"
     ]
   },
   "mixins": [
-    "example.mixins.json"
+    "cosmicmachines.mixins.json"
   ],
   "depends": {
     "cosmic_reach": ">=${cosmic_reach_version}"
