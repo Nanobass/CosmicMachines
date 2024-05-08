@@ -13,12 +13,17 @@ import finalforeach.cosmicreach.blocks.BlockState;
 import finalforeach.cosmicreach.entities.Player;
 import finalforeach.cosmicreach.gamestates.GameState;
 import finalforeach.cosmicreach.world.Zone;
-import net.paxyinc.machines.energy.base.BaseMachine;
+import net.paxyinc.machines.MachineMod;
+import net.paxyinc.machines.entities.ItemStorage;
+import net.paxyinc.machines.machines.BaseMachine;
+import net.paxyinc.machines.item.IEntityInventory;
+import net.paxyinc.machines.item.ItemInventory;
+import net.paxyinc.machines.item.ItemSlot;
 
 import java.util.List;
 
-public class AutoSmelter extends BaseMachine implements IModBlock {
-    public static final Identifier BLOCK_ID = new Identifier("machines", "smelter");
+public class AutoSmelter extends BaseMachine implements IModBlock, IEntityInventory {
+    public static final Identifier BLOCK_ID = new Identifier(MachineMod.MOD_ID, "smelter");
     public static final String BLOCK_NAME = "auto_smelter";
     public static final ResourceLocation TEXTURE_SIDE = new ResourceLocation("fluxapi", "textures/blocks/flux_furnace_side.png");
     public static final ResourceLocation TEXTURE_FRONT_ON = new ResourceLocation("fluxapi", "textures/blocks/flux_furnace_front_on.png");
@@ -27,6 +32,9 @@ public class AutoSmelter extends BaseMachine implements IModBlock {
     public AutoSmelter() {
         super(40000, Integer.MAX_VALUE, Integer.MAX_VALUE, 40);
     }
+
+    public ItemInventory inventory = new ItemInventory(3);
+    public ItemSlot input = inventory.slots.get(0), fuel = inventory.slots.get(1), output = inventory.slots.get(2);
 
     boolean powerState = false;
     boolean lastPowerState = false;
@@ -63,6 +71,11 @@ public class AutoSmelter extends BaseMachine implements IModBlock {
 
     public void onInteract(Zone zone, Player player, BlockState blockState, BlockPosition position) {
         GameState.switchToGameState(new FurnaceUI(GameState.currentGameState));
+    }
+
+    @Override
+    public ItemInventory accessInventory() {
+        return inventory;
     }
 
     public BlockGenerator getBlockGenerator() {

@@ -7,7 +7,7 @@ import dev.crmodders.flux.api.resource.ResourceLocation;
 import dev.crmodders.flux.tags.Identifier;
 import net.paxyinc.machines.MachineMod;
 import net.paxyinc.machines.blocks.models.CableModelGenerator;
-import net.paxyinc.machines.energy.base.BaseCable;
+import net.paxyinc.machines.machines.BaseCable;
 
 import java.util.List;
 
