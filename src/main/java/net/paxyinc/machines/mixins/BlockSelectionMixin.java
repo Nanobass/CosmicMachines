@@ -190,14 +190,6 @@ public abstract class BlockSelectionMixin {
 
             BlockState targetBlockState = null;
             // TODO get selected block here
-//            ItemStack itemStack = UI.hotbar.getSelectedItemStack();
-//            if (itemStack != null) {
-//                Item item = itemStack.item;
-//                if (item instanceof ItemBlock) {
-//                    ItemBlock itemBlock = (ItemBlock)item;
-//                    targetBlockState = itemBlock.blockState;
-//                }
-//            }
             ItemSlot slot = PlayerInventory.inventory.getSelectedItem();
             if(slot.itemStack != null && slot.itemStack.item instanceof BlockItem blockItem) {
                 targetBlockState = blockItem.block.getDefaultBlockState();
@@ -211,15 +203,17 @@ public abstract class BlockSelectionMixin {
             boolean interactJustPressed = Gdx.input.isButtonJustPressed(1);
             if (breakingBlockPos != null && Controls.pickBlockPressed()) {
                 // TODO pick block here
-                // UI.hotbar.pickBlock(breakingBlockPos.getBlockState());
-                PlayerInventory.inventory.pickBlock(breakingBlockPos.getBlockState());
+                Identifier blockId = Identifier.fromString(breakingBlockPos.getBlockState().getBlockId());
+                Item item = ItemRegistry.allItems.access().get(blockId);
+                PlayerInventory.inventory.pickBlock(item);
             }
 
             if (breakingBlockPos != null && breakPressed) {
                 Identifier blockId = Identifier.fromString(breakingBlockPos.getBlockState().getBlockId());
                 this.breakBlock(zone, breakingBlockPos, this.timeSinceBlockModify);
                 Item item = ItemRegistry.allItems.access().get(blockId);
-                if(item != null) PlayerInventory.inventory.pickupBlocks(item, 1);
+                // TODO break block here
+                if(item != null) PlayerInventory.inventory.pickupItems(item, 1);
                 this.timeSinceBlockModify = 0.25;
             }
 
@@ -241,7 +235,8 @@ public abstract class BlockSelectionMixin {
 
                 if (!positionBlockedByPlayer || playerEntity.noClip) {
                     this.timeSinceBlockModify = 0.25;
-                    if(PlayerInventory.inventory.takeBlocks(slot, 1)) {
+                    // TODO place block here
+                    if(PlayerInventory.inventory.takeItemsFromSlot(slot, 1)) {
                         this.placeBlock(zone, targetBlockState, placingBlockPos, this.timeSinceBlockModify);
                     }
                 }

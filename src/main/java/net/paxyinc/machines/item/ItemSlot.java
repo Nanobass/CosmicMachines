@@ -1,6 +1,8 @@
 package net.paxyinc.machines.item;
 
-public class ItemSlot {
+import org.jetbrains.annotations.NotNull;
+
+public class ItemSlot implements Comparable<ItemSlot> {
 
     public final ItemInventory container;
     public final int slotId;
@@ -12,4 +14,9 @@ public class ItemSlot {
         this.itemStack = null;
     }
 
+    @Override
+    public int compareTo(ItemSlot o) {
+        if(itemStack == null || o.itemStack == null) return -1;
+        return Integer.compare(itemStack.amount, o.itemStack.amount);
+    }
 }

@@ -1,8 +1,9 @@
 package net.paxyinc.machines.item.inventories;
 
-import finalforeach.cosmicreach.blocks.BlockState;
 import net.paxyinc.machines.item.*;
 import net.paxyinc.machines.item.renderers.PlayerInventoryRenderer;
+
+import java.util.List;
 
 public class PlayerInventory extends ItemInventory {
 
@@ -15,50 +16,46 @@ public class PlayerInventory extends ItemInventory {
 
     public boolean renderInventory = false;
     public boolean renderHotbar = true;
-    public int hotbarIndex = 0;
+    public int selectedHotbarSlot = 0;
 
     public PlayerInventory() {
         super(SLOT_COUNT);
         renderer = new PlayerInventoryRenderer(this);
     }
 
-    public void pickBlock(BlockState state) {
-
+    public void pickBlock(Item item) {
+        ItemSlot selected = getSelectedItem();
+        List<ItemSlot> allItemSlots = allSlotsForItem(item);
+        if(!allItemSlots.isEmpty()) {
+            ItemSlot inHotbar = getHotbarItemSlot(item);
+            if(inHotbar != null) {
+                setSelectedItem(inHotbar);
+            } else {
+                swapSlots(selected, allItemSlots.get(0));
+            }
+        }
     }
 
-    public boolean takeBlocks(ItemSlot slot, int amount) {
-        ItemStack stack = slot.itemStack;
-        if(stack != null) {
-            if(stack.amount - amount == 0) slot.itemStack = null;
-            if(amount <= stack.amount) {
-                stack.amount -= amount;
-                return true;
-            }
+    public ItemSlot getHotbarItemSlot(Item item) {
+        for(ItemSlot slot : slots.subList(HOTBAR, HOTBAR + 9)) {
+            if(slot.itemStack != null && slot.itemStack.item == item) return slot;
         }
-        return false;
-    }
-
-    public boolean pickupBlocks(Item item, int amount) {
-        for(int i = 0; i < slots.size(); i++) {
-            ItemStack stack = slots.get(i).itemStack;
-            if(stack == null) continue;
-            if(stack.item == item && stack.amount + amount <= stack.max) {
-                stack.amount += amount;
-                return true;
-            }
-        }
-        for(int i = 0; i < slots.size(); i++) {
-            if(slots.get(i).itemStack == null) {
-                ItemStack stack = new ItemStack(item, amount, 64);
-                slots.get(i).itemStack = stack;
-                return true;
-            }
-        }
-        return false;
+        return null;
     }
 
     public ItemSlot getSelectedItem() {
-        return slots.get(HOTBAR + hotbarIndex);
+        return slots.get(HOTBAR + selectedHotbarSlot);
     }
 
+    public void setSelectedItem(ItemSlot slot) {
+        selectedHotbarSlot = slot.slotId - HOTBAR;
+    }
+
+    public void moveSelectedHotbarSlot(int amount) {
+        selectedHotbarSlot = Math.floorMod(selectedHotbarSlot + amount, 9);
+    }
+
+    public void setSelectedHotbarSlot(int selectedHotbarSlot) {
+        this.selectedHotbarSlot = selectedHotbarSlot;
+    }
 }

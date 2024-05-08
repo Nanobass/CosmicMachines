@@ -35,7 +35,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(InGame.class)
+@Mixin(value = InGame.class, priority = 500)
 public abstract class InGameMixin extends GameState {
 
     @Shadow public static World world;

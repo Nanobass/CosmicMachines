@@ -1,33 +1,27 @@
 package net.paxyinc.machines.ui;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL31;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import dev.crmodders.flux.menus.BasicMenu;
-import dev.crmodders.flux.util.PrivUtils;
-import finalforeach.cosmicreach.blocks.Block;
+import com.insertsoda.craterchat.CraterChat;
 import finalforeach.cosmicreach.gamestates.GameState;
-import finalforeach.cosmicreach.items.ItemCatalog;
+import finalforeach.cosmicreach.gamestates.InGame;
 import finalforeach.cosmicreach.settings.Controls;
 import finalforeach.cosmicreach.ui.Crosshair;
 import finalforeach.cosmicreach.ui.UI;
 import finalforeach.cosmicreach.ui.debug.DebugInfo;
-import net.paxyinc.machines.item.ItemInventory;
-import net.paxyinc.machines.item.ItemSlot;
-import net.paxyinc.machines.item.ItemSlotPosition;
-import net.paxyinc.machines.item.ItemStack;
+import net.paxyinc.machines.item.*;
+import net.paxyinc.machines.item.inventories.MouseInventory;
 import net.paxyinc.machines.item.inventories.PlayerInventory;
-import net.paxyinc.machines.item.renderers.PlayerInventoryRenderer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
-import javax.swing.text.View;
-import java.util.ArrayList;
-import java.util.List;
+import static net.paxyinc.machines.item.inventories.PlayerInventory.inventory;
 
 public class InGameUI extends UI {
 
@@ -57,30 +51,32 @@ public class InGameUI extends UI {
     public void render() {
         if (Controls.toggleHideUIPressed()) renderUI = !renderUI;
         if (Controls.debugInfoPressed()) renderDebugInfo = !renderDebugInfo;
-        if (Controls.inventoryPressed()) PlayerInventory.inventory.renderInventory = !PlayerInventory.inventory.renderInventory;
-        uiNeedMouse = PlayerInventory.inventory.renderInventory;
-        if (Controls.cycleItemLeft()) PlayerInventory.inventory.hotbarIndex = Math.floorMod((PlayerInventory.inventory.hotbarIndex - 1), 9);
-        if (Controls.cycleItemRight()) PlayerInventory.inventory.hotbarIndex = Math.floorMod((PlayerInventory.inventory.hotbarIndex + 1), 9);
-        UI.mouseOverUI = UI.uiNeedMouse;
+        if (Controls.inventoryPressed()) inventory.renderInventory = !inventory.renderInventory;
+        if (Controls.cycleItemLeft()) inventory.moveSelectedHotbarSlot(-1);
+        if (Controls.cycleItemRight()) inventory.moveSelectedHotbarSlot(-1);
+        if(CraterChat.Chat.chatKeybind.isJustPressed() && !CraterChat.Chat.isOpen() && GameState.currentGameState instanceof InGame){
+            CraterChat.Chat.toggle();
+        }
+        mouseOverUI = uiNeedMouse = inventory.renderInventory;
+
+        Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+        uiViewport.unproject(mouse);
 
         Gdx.gl.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         if(renderUI) {
             crosshair.render(uiCamera);
             shapeRenderer.setProjectionMatrix(uiCamera.combined);
 
-            float mouseX = Gdx.input.getX();
-            float mouseY = Gdx.input.getY();
+            if(uiNeedMouse && Gdx.input.isButtonJustPressed(0)) {
+                ItemSlotPosition atMouse = inventory.renderer.atMouse(mouse);
+                if(atMouse != null) ItemInventory.swapSlots(atMouse.slot, MouseInventory.mouseInventory.slots.get(0));
+            }
 
-            ItemSlotPosition hoveredSlot = PlayerInventory.inventory.renderer.atMouse(uiViewport, mouseX, mouseY);
-            ItemSlotPosition selectedSlot = PlayerInventory.inventory.renderer.atSlot(PlayerInventory.inventory.hotbarIndex);
+            inventory.renderer.updateUI(uiViewport, mouse);
+            MouseInventory.mouseInventory.renderer.updateUI(uiViewport, mouse);
 
-            if(hoveredSlot != null) hoveredSlot.hovered = true;
-            selectedSlot.selected = true;
-
-            PlayerInventory.inventory.renderer.render(uiViewport, uiCamera);
-
-            if(hoveredSlot != null) hoveredSlot.hovered = false;
-            selectedSlot.selected = false;
+            inventory.renderer.render(uiViewport, uiCamera);
+            MouseInventory.mouseInventory.renderer.render(uiViewport, uiCamera);
 
             if (renderDebugInfo) {
                 Gdx.gl.glActiveTexture(GL13.GL_TEXTURE0);
@@ -90,11 +86,16 @@ public class InGameUI extends UI {
                 batch.end();
             }
 
+            CraterChat.Chat.render(uiViewport, uiCamera);
+
         }
     }
 
     @Override
     public boolean keyDown(int keycode) {
+        if(keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
+            inventory.setSelectedHotbarSlot(keycode - Input.Keys.NUM_1);
+        }
         return false;
     }
 
@@ -115,7 +116,7 @@ public class InGameUI extends UI {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        PlayerInventory.inventory.hotbarIndex = Math.floorMod((PlayerInventory.inventory.hotbarIndex + (int)amountY), 9);
+        inventory.selectedHotbarSlot = Math.floorMod((inventory.selectedHotbarSlot + (int)amountY), 9);
         return true;
     }
 }

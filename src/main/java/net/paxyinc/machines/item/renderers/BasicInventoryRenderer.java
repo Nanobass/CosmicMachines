@@ -24,6 +24,7 @@ import org.lwjgl.opengl.GL13;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class BasicInventoryRenderer implements IItemInventoryRenderer {
 
@@ -53,34 +54,36 @@ public class BasicInventoryRenderer implements IItemInventoryRenderer {
         itemCamera.position.set(50.0F, 50.0F, 50.0F);
         itemCamera.lookAt(0.5F, 0.5F, 0.5F);
         itemCamera.update();
-        for(ItemSlot slot : inventory.slots) {
+    }
+
+    public List<ItemSlotPosition> createArea(int startSlot, int endSlot) {
+        List<ItemSlotPosition> positions = new ArrayList<>();
+        for(int slot = startSlot; slot < endSlot; slot++) {
             Rectangle rect = new Rectangle();
             rect.width = 32;
             rect.height = 32;
-            positions.add(new ItemSlotPosition(rect, slot));
+            positions.add(new ItemSlotPosition(inventory.slots.get(slot)));
         }
+        this.positions.addAll(positions);
+        return positions;
     }
 
-    public void layout() {
-        int width = (int) Math.floor(this.width / 36.0F);
-        int height = (int) Math.floor(this.height / 36.0F);
+    public void setState(List<ItemSlotPosition> slots, ItemSlotPositionState state) {
+        slots.forEach(slot -> slot.state = state);
+    }
+
+    public void orState(ItemSlot slot, ItemSlotPositionState state) {
         for(ItemSlotPosition pos : positions) {
-            int x = pos.slot.slotId % width;
-            int y = pos.slot.slotId / width + 1;
-            pos.rectangle.x = x * 36.0F;
-            pos.rectangle.y = y * 36.0F;
+            if(pos.slot.slotId == slot.slotId && pos.state != ItemSlotPositionState.DISABLED) pos.state = state;
         }
     }
 
-    public void layoutAreaAroundCenterPoint(int startSlot, int endSlot, int wrapWidth, float centerX, float centerY, float padding, float size, boolean visible) {
-        int range = endSlot - startSlot;
+    public void layoutAreaAroundCenterPoint(List<ItemSlotPosition> slots, int wrapWidth, float centerX, float centerY, float padding, float size) {
         float lineWidth = padding + wrapWidth * (size + padding);
-        float lineHeight = padding + (float)Math.ceil((float)range / (float)wrapWidth) * (size + padding);
-        for(int slot = startSlot; slot < endSlot; slot++) {
-            ItemSlotPosition position = positions.get(slot);
-            position.visible = visible;
+        float lineHeight = padding + (float)Math.ceil((float)slots.size() / (float)wrapWidth) * (size + padding);
+        for(int index = 0; index < slots.size(); index++) {
+            ItemSlotPosition position = slots.get(index);
             Rectangle rect = position.rectangle;
-            int index = slot - startSlot;
             int x = index % wrapWidth;
             int y = index / wrapWidth;
             rect.x = padding + x * (size + padding) + centerX - lineWidth / 2.0F;
@@ -90,8 +93,17 @@ public class BasicInventoryRenderer implements IItemInventoryRenderer {
         }
     }
 
-    public void layoutAreaAroundCenterPoint(int startSlot, int endSlot, float centerX, float centerY, boolean visible) {
-        layoutAreaAroundCenterPoint(startSlot, endSlot, 9, centerX, centerY, 2, 32, visible);
+    public List<ItemSlotPosition> getPositions(ItemSlot slot) {
+        List<ItemSlotPosition> res = new ArrayList<>();
+        for(ItemSlotPosition pos : positions) {
+            if(pos.slot.slotId == slot.slotId) res.add(pos);
+        }
+        return res;
+    }
+
+    @Override
+    public void updateUI(Viewport uiViewport, Vector2 mouse) {
+
     }
 
     @Override
@@ -102,17 +114,28 @@ public class BasicInventoryRenderer implements IItemInventoryRenderer {
 
         List<ItemSlotPosition> positions = new ArrayList<>();
         for(ItemSlotPosition position : this.positions) {
-            if(position.visible) positions.add(position);
+            if(position.state != ItemSlotPositionState.DISABLED) positions.add(position);
         }
 
         batch.setProjectionMatrix(uiCamera.combined);
         batch.begin();
         for(ItemSlotPosition position : positions) {
-            if(position.hovered) shape.setColor(itemHighlightedColor);
-            else shape.setColor(itemBackgroundColor);
-            shape.filledRectangle(this.x + position.rectangle.x, this.y + position.rectangle.y, position.rectangle.width, position.rectangle.height);
-            shape.setColor(itemHighlightedColor);
-            if(position.selected) shape.rectangle(this.x + position.rectangle.x, this.y + position.rectangle.y, position.rectangle.width, position.rectangle.height, 2);
+            Consumer<Color> drawFunc = color -> shape.filledRectangle(this.x + position.rectangle.x, this.y + position.rectangle.y, position.rectangle.width, position.rectangle.height, color);
+            Consumer<Color> borderFunc = color -> shape.rectangle(this.x + position.rectangle.x, this.y + position.rectangle.y, position.rectangle.width, position.rectangle.height, color, 2);
+
+            switch (position.state) {
+                case HOVERED:
+                    drawFunc.accept(itemHighlightedColor);
+                    break;
+                case SELECTED:
+                    borderFunc.accept(itemHighlightedColor);
+                case VISIBLE:
+                    drawFunc.accept(itemBackgroundColor);
+                    break;
+                case DISABLED:
+                default:
+                    break;
+            }
         }
         batch.end();
 
@@ -160,18 +183,11 @@ public class BasicInventoryRenderer implements IItemInventoryRenderer {
 
     }
 
-    @Override
-    public ItemSlotPosition atMouse(Viewport uiViewport, float mouseX, float mouseY) {
-        Vector2 tmp = new Vector2(mouseX, mouseY);
-        uiViewport.unproject(tmp);
+    public ItemSlotPosition atMouse(Vector2 mouse) {
         for(ItemSlotPosition pos : positions) {
-            if(pos.rectangle.contains(tmp)) return pos;
+            if(pos.rectangle.contains(mouse) && pos.state != ItemSlotPositionState.DISABLED) return pos;
         }
         return null;
     }
 
-    @Override
-    public ItemSlotPosition atSlot(int slot) {
-        return positions.get(slot);
-    }
 }

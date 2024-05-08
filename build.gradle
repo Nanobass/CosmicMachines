@@ -106,6 +106,9 @@ dependencies {
 
     // FluxAPI
     gameMod("dev.crmodders:fluxapi:${flux_version}")
+    gameMod("dev.crmodders:modmenu:${modmenu_version}")
+    gameMod("com.github.insertsoda:craterchat:${craterchat_version}")
+    gameMod("com.mojang:brigadier:${brigadier_version}")
 
     shadowMe("com.github.Querz:NBT:6.1");
 
