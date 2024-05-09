@@ -26,6 +26,8 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static dev.crmodders.flux.ui.UIRenderer.uiRenderer;
+
 public class BasicInventoryRenderer implements IItemInventoryRenderer {
 
     protected PerspectiveCamera itemCamera;
@@ -177,8 +179,8 @@ public class BasicInventoryRenderer implements IItemInventoryRenderer {
 
         for(ItemSlotPosition position : positions) {
             if(position.slot.itemStack == null || position.slot.itemStack.amount == 1) continue;
-            TextBatch batch = UIRenderer.uiRenderer.createText(UIRenderer.cosmicReachFont, 12f, String.valueOf(position.slot.itemStack.amount), Color.WHITE);
-            UIRenderer.uiRenderer.drawBatch(batch, this.x + position.rectangle.x, this.y + position.rectangle.y + 18.0F);
+            TextBatch batch = uiRenderer.createText(UIRenderer.cosmicReachFont, 12f, String.valueOf(position.slot.itemStack.amount), Color.WHITE);
+            batch.renderLater(uiRenderer, this.x + position.rectangle.x, this.y + position.rectangle.y + 18.0F);
         }
 
     }

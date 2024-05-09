@@ -65,6 +65,7 @@ public class InGameUI extends UI {
         Gdx.gl.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         if(renderUI) {
             crosshair.render(uiCamera);
+            batch.setProjectionMatrix(uiCamera.combined);
             shapeRenderer.setProjectionMatrix(uiCamera.combined);
 
             if(uiNeedMouse && Gdx.input.isButtonJustPressed(0)) {
@@ -78,14 +79,11 @@ public class InGameUI extends UI {
             inventory.renderer.render(uiViewport, uiCamera);
             MouseInventory.mouseInventory.renderer.render(uiViewport, uiCamera);
 
+            uiViewport.apply();
             if (renderDebugInfo) {
                 Gdx.gl.glActiveTexture(GL13.GL_TEXTURE0);
-                batch.setProjectionMatrix(uiCamera.combined);
-                batch.begin();
                 DebugInfo.drawDebugText(batch, uiViewport);
-                batch.end();
             }
-
             CraterChat.Chat.render(uiViewport, uiCamera);
 
         }

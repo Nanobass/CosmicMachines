@@ -6,6 +6,7 @@ import dev.crmodders.flux.api.generators.BlockGenerator;
 import dev.crmodders.flux.api.generators.BlockModelGenerator;
 import dev.crmodders.flux.api.resource.ResourceLocation;
 import dev.crmodders.flux.menus.BasicMenu;
+import dev.crmodders.flux.mixins.gui.GameStateMixin;
 import dev.crmodders.flux.tags.Identifier;
 import finalforeach.cosmicreach.blocks.Block;
 import finalforeach.cosmicreach.blocks.BlockPosition;

@@ -15,6 +15,8 @@ import net.paxyinc.machines.item.inventories.MouseInventory;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
+import static dev.crmodders.flux.ui.UIRenderer.uiRenderer;
+
 public class MouseInventoryRenderer implements IItemInventoryRenderer {
 
     protected PerspectiveCamera itemCamera;
@@ -77,8 +79,7 @@ public class MouseInventoryRenderer implements IItemInventoryRenderer {
 
         if(slot.slot.itemStack.amount == 1) return;
         TextBatch batch = UIRenderer.uiRenderer.createText(UIRenderer.cosmicReachFont, 12f, String.valueOf(slot.slot.itemStack.amount), Color.WHITE);
-        UIRenderer.uiRenderer.drawBatch(batch, slot.rectangle.x - slot.rectangle.width / 2, slot.rectangle.y - slot.rectangle.height / 2 + 18.0F);
-
+        batch.renderLater(uiRenderer, slot.rectangle.x - slot.rectangle.width / 2, slot.rectangle.y - slot.rectangle.height / 2 + 18.0F);
     }
 
     @Override
