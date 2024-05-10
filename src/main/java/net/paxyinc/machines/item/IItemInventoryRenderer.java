@@ -9,9 +9,10 @@ import net.paxyinc.machines.ui.BaseItemElement;
 import net.paxyinc.machines.ui.InGameUI;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
-public interface IItemInventoryRenderer {
+public interface IItemInventoryRenderer extends InGameUI {
 
-    InGameUI getUI();
     BaseItemElement atMouse(Viewport viewport, Vector2 mouse);
+
+    ItemInventory getInventory();
 
 }

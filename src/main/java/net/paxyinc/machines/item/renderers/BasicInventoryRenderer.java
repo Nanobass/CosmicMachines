@@ -34,7 +34,7 @@ import java.util.function.Consumer;
 
 import static dev.crmodders.flux.ui.UIRenderer.uiRenderer;
 
-public class BasicInventoryRenderer implements InGameUI, IItemInventoryRenderer {
+public class BasicInventoryRenderer implements IItemInventoryRenderer {
 
     protected final ItemInventory inventory;
 
@@ -91,11 +91,6 @@ public class BasicInventoryRenderer implements InGameUI, IItemInventoryRenderer 
     }
 
     @Override
-    public InGameUI getUI() {
-        return this;
-    }
-
-    @Override
     public List<Component> render(Viewport uiViewport, Camera uiCamera, Vector2 mouse) {
         List<Component> components = new ArrayList<>();
         positions.forEach(components::add);
@@ -109,4 +104,8 @@ public class BasicInventoryRenderer implements InGameUI, IItemInventoryRenderer 
         return null;
     }
 
+    @Override
+    public ItemInventory getInventory() {
+        return inventory;
+    }
 }

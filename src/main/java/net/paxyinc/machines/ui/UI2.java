@@ -11,12 +11,14 @@ import dev.crmodders.flux.ui.Component;
 import dev.crmodders.flux.ui.UIRenderer;
 import finalforeach.cosmicreach.gamestates.GameState;
 import finalforeach.cosmicreach.gamestates.InGame;
+import finalforeach.cosmicreach.gamestates.PauseMenu;
 import finalforeach.cosmicreach.settings.Controls;
 import finalforeach.cosmicreach.ui.Crosshair;
 import finalforeach.cosmicreach.ui.UI;
 import finalforeach.cosmicreach.ui.debug.DebugInfo;
 import net.paxyinc.machines.item.*;
 import net.paxyinc.machines.item.inventories.MouseInventory;
+import net.paxyinc.machines.item.inventories.PlayerInventory;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -31,10 +33,42 @@ public class UI2 extends UI {
     public OrthographicCamera uiCamera;
     public Crosshair crosshair = new Crosshair();
 
-    public static List<ItemInventory> activeInventories = new ArrayList<>();
     public static List<InGameUI> activeInGameUIs = new ArrayList<>();
+    public static InGameUI activeBlockUI = null;
 
     public boolean renderDebugInfo = false;
+
+    public static void openBlockUI(InGameUI ui) {
+        if(activeBlockUI != null) {
+            activeInGameUIs.remove(activeBlockUI);
+        }
+        activeBlockUI = ui;
+        activeInGameUIs.add(ui);
+    }
+
+    public static void closeBlockUI() {
+        if(activeBlockUI != null) {
+            activeInGameUIs.remove(activeBlockUI);
+            activeBlockUI = null;
+        }
+    }
+
+    public static boolean areAnyInventoriesOpen() {
+        return inventory.renderInventory || activeBlockUI != null;
+    }
+
+    public static boolean closeAnyOpenInventories() {
+        boolean wereAnyInventoriesOpen = false;
+        if(inventory.renderInventory) {
+            wereAnyInventoriesOpen = true;
+            inventory.renderInventory = false;
+        }
+        if(activeBlockUI != null) {
+            wereAnyInventoriesOpen = true;
+            closeBlockUI();
+        }
+        return wereAnyInventoriesOpen;
+    }
 
     public UI2() {
         uiCamera = new OrthographicCamera((float)Gdx.graphics.getWidth(), (float)Gdx.graphics.getHeight());
@@ -44,8 +78,8 @@ public class UI2 extends UI {
         uiViewport = new ExtendViewport(800.0F, 600.0F, this.uiCamera);
         uiViewport.apply();
 
-        activeInventories.add(inventory);
-        activeInventories.add(mouseInventory);
+        activeInGameUIs.add(inventory.renderer);
+        activeInGameUIs.add(mouseInventory.renderer);
 
     }
 
@@ -56,16 +90,25 @@ public class UI2 extends UI {
 
     @Override
     public void render() {
-        if (Controls.toggleHideUIPressed()) renderUI = !renderUI;
-        if (Controls.debugInfoPressed()) renderDebugInfo = !renderDebugInfo;
-        if (Controls.inventoryPressed()) inventory.renderInventory = !inventory.renderInventory;
-        if (Controls.cycleItemLeft()) inventory.moveSelectedHotbarSlot(-1);
-        if (Controls.cycleItemRight()) inventory.moveSelectedHotbarSlot(-1);
-        if(CraterChat.Chat.chatKeybind.isJustPressed() && !CraterChat.Chat.isOpen() && GameState.currentGameState instanceof InGame){
-            CraterChat.Chat.toggle();
+        if(!PauseMenu.class.isInstance(GameState.currentGameState)) {
+            if (Controls.toggleHideUIPressed()) renderUI = !renderUI;
+            if (Controls.debugInfoPressed()) renderDebugInfo = !renderDebugInfo;
+            if (Controls.inventoryPressed()) {
+                if(areAnyInventoriesOpen()) {
+                    closeAnyOpenInventories();
+                } else {
+                    inventory.renderInventory = true;
+                }
+            };
+            if (Controls.cycleItemLeft()) inventory.moveSelectedHotbarSlot(-1);
+            if (Controls.cycleItemRight()) inventory.moveSelectedHotbarSlot(-1);
+            if(CraterChat.Chat.chatKeybind.isJustPressed() && !CraterChat.Chat.isOpen() && GameState.currentGameState instanceof InGame){
+                CraterChat.Chat.toggle();
+            }
         }
 
-        mouseOverUI = uiNeedMouse = renderUI && (inventory.renderInventory || activeInventories.size() > 2 || !activeInGameUIs.isEmpty());
+
+        mouseOverUI = uiNeedMouse = renderUI && (inventory.renderInventory || activeBlockUI != null);
 
         Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
         uiViewport.unproject(mouse);
@@ -76,23 +119,27 @@ public class UI2 extends UI {
             uiViewport.apply();
             batch.setProjectionMatrix(uiCamera.combined);
 
-            List<Component> uiElements = new ArrayList<>();
-            for(ItemInventory activeInventory : activeInventories) {
+            inventory.renderChestMode = activeBlockUI != null;
+
+            List<ItemInventory> inventories = new ArrayList<>();
+            for(InGameUI ui : activeInGameUIs) {
+                if(ui instanceof IItemInventoryRenderer inventoryRenderer) {
+                    inventories.add(inventoryRenderer.getInventory());
+                } else if(ui instanceof BlockInventoryUI blockUI) {
+                    inventories.add(blockUI.inventory);
+                }
+            }
+            for(ItemInventory activeInventory : inventories) {
                 if(uiNeedMouse && Gdx.input.isButtonJustPressed(0) && activeInventory != mouseInventory) {
                     BaseItemElement atMouse = activeInventory.renderer.atMouse(uiViewport, mouse);
                     if(atMouse != null) ItemInventory.swapSlots(atMouse.slot, mouseInventory.slot);
                 }
-                InGameUI inventoryUI = activeInventory.renderer.getUI();
-                uiElements.addAll(inventoryUI.render(uiViewport, uiCamera, mouse));
-                uiViewport.apply();
             }
-
+            List<Component> uiElements = new ArrayList<>();
             for(InGameUI ui : activeInGameUIs) {
-                List<? extends Component> e = ui.render(uiViewport, uiCamera, mouse);
-                uiElements.addAll(e);
+                uiElements.addAll(ui.render(uiViewport, uiCamera, mouse));
                 uiViewport.apply();
             }
-
             UIRenderer.uiRenderer.render(uiElements, uiCamera, uiViewport, mouse);
 
             if (renderDebugInfo) {

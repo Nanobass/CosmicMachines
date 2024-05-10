@@ -1,6 +1,7 @@
 package net.paxyinc.machines.item.views;
 
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.math.Matrix4;
 import finalforeach.cosmicreach.blocks.Block;
 import finalforeach.cosmicreach.blocks.BlockState;
 import finalforeach.cosmicreach.rendering.MeshData;
@@ -14,8 +15,8 @@ import net.paxyinc.machines.item.IItemView;
 
 public class BlockItemView implements IItemView {
     public final BlockState blockState;
-    IGameMesh mesh;
-    GameShader shader;
+    public IGameMesh mesh;
+    public GameShader shader;
 
     public BlockItemView(BlockState blockState) {
         this.blockState = blockState;
@@ -47,11 +48,11 @@ public class BlockItemView implements IItemView {
         }
     }
 
-    public void render(Camera camera) {
+    public void render(Camera camera, Matrix4 projViewTrans) {
         if (this.mesh != null) {
             if (!BlockModelJson.useIndices) SharedQuadIndexData.bind();
             shader.bind(camera);
-            shader.shader.setUniformMatrix("u_projViewTrans", camera.combined);
+            shader.shader.setUniformMatrix("u_projViewTrans", projViewTrans);
             mesh.bind(shader.shader);
             mesh.render(shader.shader, 4);
             mesh.unbind(shader.shader);

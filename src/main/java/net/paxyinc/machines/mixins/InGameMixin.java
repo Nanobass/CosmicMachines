@@ -3,9 +3,11 @@ package net.paxyinc.machines.mixins;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import finalforeach.cosmicreach.GameSingletons;
+import finalforeach.cosmicreach.entities.Entity;
 import finalforeach.cosmicreach.entities.Player;
 import finalforeach.cosmicreach.gamestates.GameState;
 import finalforeach.cosmicreach.gamestates.InGame;
@@ -18,6 +20,8 @@ import finalforeach.cosmicreach.world.BlockSelection;
 import finalforeach.cosmicreach.world.Sky;
 import finalforeach.cosmicreach.world.World;
 import finalforeach.cosmicreach.world.Zone;
+import net.paxyinc.machines.entities.ItemEntity;
+import net.paxyinc.machines.entities.RenderableEntity;
 import net.paxyinc.machines.item.inventories.PlayerInventory;
 import net.paxyinc.machines.ui.UI2;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,6 +30,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Mixin(value = InGame.class, priority = 500)
 public abstract class InGameMixin extends GameState {
@@ -55,10 +62,25 @@ public abstract class InGameMixin extends GameState {
             player.updateCamera(rawWorldCamera, partTick);
         }
 
+        List<RenderableEntity> despawn = new ArrayList<>();
+
+        for(Entity entity : playerZone.allEntities) {
+            if(entity instanceof ItemEntity itemEntity) {
+                Vector3 diff = new Vector3(entity.position);
+                diff.sub(player.getEntity().position);
+                if(diff.len() < 1 && itemEntity.timer <= 0) {
+                    PlayerInventory.inventory.put(itemEntity.items.item, itemEntity.items.amount);
+                    despawn.add(itemEntity);
+                }
+            }
+        }
+
+        for(RenderableEntity entity : despawn) {
+            entity.despawn(playerZone);
+        }
+
         if (!this.firstFrame && Gdx.input.isKeyJustPressed(111)) {
-            if (PlayerInventory.inventory.renderInventory) {
-                PlayerInventory.inventory.renderInventory = false;
-            } else {
+            if (!UI2.closeAnyOpenInventories()) {
                 boolean cursorCatched = Gdx.input.isCursorCatched();
                 Gdx.input.setCursorCatched(false);
                 switchToGameState(new PauseMenu(cursorCatched));
@@ -70,6 +92,11 @@ public abstract class InGameMixin extends GameState {
         Sky.drawStars(rawWorldCamera);
         GameSingletons.zoneRenderer.render(playerZone, rawWorldCamera);
         this.blockSelection.render(rawWorldCamera);
+        for(Entity entity : playerZone.allEntities) {
+            if(entity instanceof RenderableEntity renderable) {
+                renderable.render(rawWorldCamera);
+            }
+        }
         this.ui.render();
         this.drawUIElements();
         float maxScreenshotMsgCountdownTimer = 5.0F;

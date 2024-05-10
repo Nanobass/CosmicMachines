@@ -16,7 +16,7 @@ public class TestCommand implements Command {
     private static int giveItem(CommandSource source, String itemId, int amount) {
         Item item = ItemRegistry.allItems.access().get(Identifier.fromString(itemId));
         if(item == null) return 0;
-        PlayerInventory.inventory.pickupItems(item, amount);
+        PlayerInventory.inventory.put(item, amount);
         return 1;
     }
 

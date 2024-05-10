@@ -15,6 +15,7 @@ public class PlayerInventory extends ItemInventory {
     public static final int SLOT_COUNT = ARMOR + 4;
 
     public boolean renderInventory = false;
+    public boolean renderChestMode = false;
     public boolean renderHotbar = true;
     public int selectedHotbarSlot = 0;
 
@@ -25,7 +26,7 @@ public class PlayerInventory extends ItemInventory {
 
     public void pickBlock(Item item) {
         ItemSlot selected = getSelectedItem();
-        List<ItemSlot> allItemSlots = allSlotsForItem(item);
+        List<ItemSlot> allItemSlots = allSlotsForItem(item).toList();
         if(!allItemSlots.isEmpty()) {
             ItemSlot inHotbar = getHotbarItemSlot(item);
             if(inHotbar != null) {

@@ -120,4 +120,9 @@ public class TileEntityManager implements GameEvents.GameEventTriggers.OnGameTic
         }
     }
 
+    public void onBlockInteract(Zone zone, BlockPosition position, Player player, double timeSinceLast) {
+        TileEntity entity = entitiesByBlock.get(position);
+        if(entity != null) entity.onInteract(zone, player);
+    }
+
 }

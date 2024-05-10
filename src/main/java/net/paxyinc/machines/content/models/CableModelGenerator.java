@@ -1,4 +1,4 @@
-package net.paxyinc.machines.blocks.models;
+package net.paxyinc.machines.content.models;
 
 import dev.crmodders.flux.api.generators.BlockGenerator;
 import dev.crmodders.flux.api.generators.BlockModelGenerator;

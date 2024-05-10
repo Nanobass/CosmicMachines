@@ -109,7 +109,7 @@ public class BaseItemElement extends BaseElement {
                 Gdx.gl.glCullFace(GL11.GL_BACK);
                 Gdx.gl.glEnable(GL11.GL_DEPTH_TEST);
                 Gdx.gl.glDepthFunc(GL11.GL_ALWAYS);
-                slot.itemStack.item.view.render(itemCamera);
+                slot.itemStack.item.view.render(itemCamera, itemCamera.combined);
                 Gdx.gl.glEnable(GL11.GL_DEPTH_TEST);
                 Gdx.gl.glDepthFunc(GL11.GL_LESS);
                 Gdx.gl.glEnable(GL11.GL_CULL_FACE);

@@ -6,7 +6,8 @@
   "mixins": [
     "InGameMixin",
     "BlockSelectionMixin",
-    "GameLoaderMixin"
+    "GameLoaderMixin",
+    "PlayerMixin"
   ],
   "client": [],
   "server": [],

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.Ray;
@@ -22,6 +23,9 @@ import finalforeach.cosmicreach.ui.UI;
 import finalforeach.cosmicreach.world.BlockSelection;
 import finalforeach.cosmicreach.world.Chunk;
 import finalforeach.cosmicreach.world.Zone;
+import net.paxyinc.machines.entities.ItemEntity;
+import net.paxyinc.machines.entities.RenderableEntity;
+import net.paxyinc.machines.entities.TileEntityManager;
 import net.paxyinc.machines.item.Item;
 import net.paxyinc.machines.item.ItemRegistry;
 import net.paxyinc.machines.item.ItemSlot;
@@ -212,8 +216,10 @@ public abstract class BlockSelectionMixin {
                 Identifier blockId = Identifier.fromString(breakingBlockPos.getBlockState().getBlockId());
                 this.breakBlock(zone, breakingBlockPos, this.timeSinceBlockModify);
                 Item item = ItemRegistry.allItems.access().get(blockId);
-                // TODO break block here
-                if(item != null) PlayerInventory.inventory.pickupItems(item, 1);
+                // TODO spawning item here
+                ItemEntity entity = new ItemEntity(item, 1);
+                RenderableEntity.spawn(zone, breakingBlockPos.getGlobalX() + 0.5f, breakingBlockPos.getGlobalY() + 0.5f, breakingBlockPos.getGlobalZ() + 0.5f, entity);
+                entity.velocity.add(MathUtils.random(-2, 2), MathUtils.random(0, 1), MathUtils.random(-2, 2));
                 this.timeSinceBlockModify = 0.25;
             }
 
@@ -236,12 +242,13 @@ public abstract class BlockSelectionMixin {
                 if (!positionBlockedByPlayer || playerEntity.noClip) {
                     this.timeSinceBlockModify = 0.25;
                     // TODO place block here
-                    if(PlayerInventory.inventory.takeItemsFromSlot(slot, 1)) {
+                    if(slot.take(1)) {
                         this.placeBlock(zone, targetBlockState, placingBlockPos, this.timeSinceBlockModify);
                     }
                 }
             } else if (breakingBlockPos != null && (interactJustPressed || placePressed)) {
                 this.interactWith(zone, breakingBlockPos, interactJustPressed, placePressed, this.timeSinceBlockModify);
+                TileEntityManager.MANAGER.onBlockInteract(zone, breakingBlockPos, InGame.getLocalPlayer(), timeSinceBlockModify);
                 this.timeSinceBlockModify = 0.25;
             }
 

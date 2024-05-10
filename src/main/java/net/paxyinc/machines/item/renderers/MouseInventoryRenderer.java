@@ -24,7 +24,7 @@ import java.util.List;
 
 import static dev.crmodders.flux.ui.UIRenderer.uiRenderer;
 
-public class MouseInventoryRenderer implements InGameUI, IItemInventoryRenderer {
+public class MouseInventoryRenderer implements IItemInventoryRenderer {
 
     private BaseItemElement slot;
 
@@ -34,11 +34,6 @@ public class MouseInventoryRenderer implements InGameUI, IItemInventoryRenderer 
         slot.shouldRenderName = false;
         slot.width = 32;
         slot.height = 32;
-    }
-
-    @Override
-    public InGameUI getUI() {
-        return this;
     }
 
     @Override
@@ -52,5 +47,10 @@ public class MouseInventoryRenderer implements InGameUI, IItemInventoryRenderer 
     @Override
     public BaseItemElement atMouse(Viewport viewport, Vector2 mouse) {
         return slot;
+    }
+
+    @Override
+    public ItemInventory getInventory() {
+        return slot.slot.container;
     }
 }

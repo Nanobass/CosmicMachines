@@ -1,9 +1,11 @@
 package net.paxyinc.machines.entities;
 
+import dev.crmodders.flux.api.block.IModBlock;
 import finalforeach.cosmicreach.blocks.Block;
 import finalforeach.cosmicreach.blocks.BlockPosition;
 import finalforeach.cosmicreach.blocks.BlockState;
 import finalforeach.cosmicreach.constants.Direction;
+import finalforeach.cosmicreach.entities.Player;
 import finalforeach.cosmicreach.world.Zone;
 import net.paxyinc.machines.MachineMod;
 import net.paxyinc.machines.nbt.NbtSerializable;
@@ -30,6 +32,10 @@ public class TileEntity implements NbtSerializable<TileEntity>, ITileEntityCapab
 
     public void onNeighborBroken(Zone zone, Direction face, TileEntity entity) {
         neighbors.remove(face);
+    }
+
+    public void onInteract(Zone zone, Player player) {
+
     }
 
     public void onTick(Zone zone) {

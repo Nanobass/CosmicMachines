@@ -7,9 +7,9 @@ import dev.crmodders.flux.registry.registries.AccessableRegistry;
 import dev.crmodders.flux.tags.Identifier;
 import finalforeach.cosmicreach.blocks.Block;
 import net.fabricmc.api.ModInitializer;
-import net.paxyinc.machines.blocks.AutoSmelter;
-import net.paxyinc.machines.machines.BaseGenerator;
-import net.paxyinc.machines.blocks.Cable;
+import net.paxyinc.machines.content.blocks.AutoSmelterBlock;
+import net.paxyinc.machines.content.blocks.CableBlock;
+import net.paxyinc.machines.entities.IModTileEntity;
 import net.paxyinc.machines.entities.TileEntityManager;
 import net.paxyinc.machines.item.Item;
 import net.paxyinc.machines.item.ItemRegistry;
@@ -37,14 +37,18 @@ public class MachineMod implements ModInitializer {
     }
 
     public void onFluxInit() {
-        FluxRegistries.BLOCK_FACTORIES.add(Cable::new);
-        TileEntityManager.BLOCK_TILE_ENTITY_FACTORIES.register(Cable.BLOCK_ID, Cable::new);
-        FluxRegistries.BLOCK_FACTORIES.add(AutoSmelter::new);
-        TileEntityManager.BLOCK_TILE_ENTITY_FACTORIES.register(AutoSmelter.BLOCK_ID, AutoSmelter::new);
-        TileEntityManager.BLOCK_TILE_ENTITY_FACTORIES.register(Identifier.fromString("base:asphalt"), () -> new BaseGenerator(40000, Integer.MAX_VALUE, Integer.MAX_VALUE, 40));
+        FluxRegistries.BLOCK_FACTORIES.add(CableBlock::new);
+        FluxRegistries.BLOCK_FACTORIES.add(AutoSmelterBlock::new);
     }
 
     public void onFluxPostInit() {
+        AccessableRegistry<IModBlock> blocks = FluxRegistries.BLOCKS.access();
+        for(Identifier blockId : blocks.getRegisteredNames()) {
+            if(blocks.get(blockId) instanceof IModTileEntity tileEntity) {
+                TileEntityManager.BLOCK_TILE_ENTITY_FACTORIES.register(blockId, tileEntity.getTileEntityFactory());
+            }
+        }
+
         Map<Block, String> reverseNameLookup = new HashMap<>();
         for(var entry : Block.blocksByName.entrySet()) {
             reverseNameLookup.put(entry.getValue(), entry.getKey());
@@ -55,7 +59,6 @@ public class MachineMod implements ModInitializer {
             blockNames.put(Identifier.fromString(entry.getKey()), reverseNameLookup.get(entry.getValue()));
         }
 
-        AccessableRegistry<IModBlock> blocks = FluxRegistries.BLOCKS.access();
         for(Identifier blockId : blocks.getRegisteredNames()) {
             Item item = new BlockItem(blockId, blockNames.get(blockId));
             ItemRegistry.allItems.register(item.itemId, item);

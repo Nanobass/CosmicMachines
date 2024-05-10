@@ -22,12 +22,12 @@ public class BaseItemPipe extends TileEntity implements IItemProducer, IItemCons
             Direction face = entry.getKey();
             TileEntity neighbor = entry.getValue();
             if(neighbor instanceof IItemConsumer consumer) {
-                Item item = storage.inventory.getUniqueItems().get(0);
-                int canProduce, canConsume;
-                canConsume = consumer.consume(face, item, storage.available(item), false);
-                canProduce = produce(face, item, Math.min(canConsume, storage.maxProduce), false);
-                consumer.consume(face, item, canProduce, true);
-                produce(face, item, canProduce, true);
+//                Item item = storage.inventory.getUniqueItems().get(0);
+//                int canProduce, canConsume;
+//                canConsume = consumer.consume(face, item, storage.available(item), false);
+//                canProduce = produce(face, item, Math.min(canConsume, storage.maxProduce), false);
+//                consumer.consume(face, item, canProduce, true);
+//                produce(face, item, canProduce, true);
             }
         }
     }
