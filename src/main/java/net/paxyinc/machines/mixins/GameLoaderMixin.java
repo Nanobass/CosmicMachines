@@ -6,6 +6,7 @@ import dev.crmodders.flux.engine.GameLoader;
 import dev.crmodders.flux.menus.BasicMenu;
 import dev.crmodders.flux.registry.registries.AccessableRegistry;
 import dev.crmodders.flux.tags.Identifier;
+import finalforeach.cosmicreach.BlockGame;
 import finalforeach.cosmicreach.gamestates.GameState;
 import net.paxyinc.machines.item.Item;
 import net.paxyinc.machines.item.ItemRegistry;

@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import dev.crmodders.flux.ui.UIRenderer;
 import net.paxyinc.machines.item.*;
 import net.paxyinc.machines.item.inventories.PlayerInventory;
+import net.paxyinc.machines.ui.BaseItemElement;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class PlayerInventoryRenderer extends BasicInventoryRenderer {
 
-    private List<ItemSlotPosition> hotbarInGame, hotbarInInventory, mainInventory, armorInInventory;
+    private List<BaseItemElement> hotbarInGame, hotbarInInventory, mainInventory, armorInInventory;
 
     public PlayerInventoryRenderer(ItemInventory inventory) {
         super(inventory);
@@ -28,7 +29,8 @@ public class PlayerInventoryRenderer extends BasicInventoryRenderer {
         armorInInventory = createArea(PlayerInventory.ARMOR, PlayerInventory.ARMOR + 4);
     }
 
-    public void updateUI(Viewport uiViewport, Vector2 mouse) {
+    @Override
+    public void render(Viewport uiViewport, Camera uiCamera, Vector2 mouse) {
         layoutAreaAroundCenterPoint(hotbarInGame ,9, 0, uiViewport.getWorldHeight() / 2.0F - 36F, 2, 32);
         layoutAreaAroundCenterPoint(hotbarInInventory, 9,0, 80, 2, 32);
         layoutAreaAroundCenterPoint(mainInventory, 9, 0, 0, 2, 32);
@@ -43,12 +45,11 @@ public class PlayerInventoryRenderer extends BasicInventoryRenderer {
             setState(hotbarInGame, ItemSlotPositionState.VISIBLE);
         }
 
-        ItemSlotPosition atMouse = atMouse(mouse);
+        BaseItemElement atMouse = atMouse(mouse);
         if(atMouse != null) {
             orState(atMouse.slot, ItemSlotPositionState.HOVERED);
         }
         orState(PlayerInventory.inventory.getSelectedItem(), ItemSlotPositionState.SELECTED);
-
+        super.render(uiViewport, uiCamera, mouse);
     }
-
 }

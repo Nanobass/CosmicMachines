@@ -1,7 +1,9 @@
 package net.paxyinc.machines.item;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ItemInventory {
@@ -43,6 +45,14 @@ public class ItemInventory {
             if(slot.itemStack == null) return slot;
         }
         return null;
+    }
+
+    public List<Item> getUniqueItems() {
+        Set<Item> set = new HashSet<>();
+        for(ItemSlot slot : slots) {
+            if(slot.itemStack != null) set.add(slot.itemStack.item);
+        }
+        return new ArrayList<>(set);
     }
 
     public boolean hasEnoughItems(Item item, int amount) {

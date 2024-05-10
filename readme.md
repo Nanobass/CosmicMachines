@@ -6,7 +6,7 @@ The core of this Mod is Machines. It includes Generator, Factories, Furnaces, Cr
 Batteries and everything known from popular Minecraft Mods,
 # Warning
 This mod is a highly unstable beta running on an unreleased version 
-of FluxAPI 6.0 (available on my GitHub), FluxAPI 6.0 is not stable / tested yet and can corrupt / break worlds
+of FluxAPI 6.0 (will be available on release), FluxAPI 6.0 is not stable / tested yet and can corrupt / break worlds
 # Planned Features
 - Experimental Crafting System: similar to Satisfactory, but with OreDict and so on
 - Furnace, Grinder, Washer, Assembler as some Basic Machines to get going

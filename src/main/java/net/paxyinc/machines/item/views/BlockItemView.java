@@ -25,7 +25,7 @@ public class BlockItemView implements IItemView {
     public void initialize() {
         MeshData meshData;
         if (blockState.isTransparent) {
-            if (blockState.getBlock() == Block.WATER) {
+            if (blockState.isFluid) {
                 meshData = new MeshData(ChunkShader.WATER_BLOCK_SHADER, RenderOrder.TRANSPARENT);
             } else {
                 meshData = new MeshData(ChunkShader.DEFAULT_BLOCK_SHADER, RenderOrder.TRANSPARENT);
@@ -49,20 +49,15 @@ public class BlockItemView implements IItemView {
 
     public void render(Camera camera) {
         if (this.mesh != null) {
-            if (!BlockModelJson.useIndices) {
-                SharedQuadIndexData.bind();
-            }
-
-            this.shader.bind(camera);
-            this.shader.shader.setUniformMatrix("u_projViewTrans", camera.combined);
-            this.mesh.bind(this.shader.shader);
-            this.mesh.render(this.shader.shader, 4);
-            this.mesh.unbind(this.shader.shader);
-            this.shader.unbind();
-            if (!BlockModelJson.useIndices) {
-                SharedQuadIndexData.unbind();
-            }
+            if (!BlockModelJson.useIndices) SharedQuadIndexData.bind();
+            shader.bind(camera);
+            shader.shader.setUniformMatrix("u_projViewTrans", camera.combined);
+            mesh.bind(shader.shader);
+            mesh.render(shader.shader, 4);
+            mesh.unbind(shader.shader);
+            shader.unbind();
+            if (!BlockModelJson.useIndices) SharedQuadIndexData.unbind();
         }
-
     }
+
 }

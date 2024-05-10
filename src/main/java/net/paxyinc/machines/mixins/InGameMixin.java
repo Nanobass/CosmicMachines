@@ -1,11 +1,7 @@
 package net.paxyinc.machines.mixins;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -15,19 +11,15 @@ import finalforeach.cosmicreach.gamestates.GameState;
 import finalforeach.cosmicreach.gamestates.InGame;
 import finalforeach.cosmicreach.gamestates.PauseMenu;
 import finalforeach.cosmicreach.io.SaveLocation;
-import finalforeach.cosmicreach.items.ItemCatalog;
-import finalforeach.cosmicreach.items.ItemSlotCursor;
 import finalforeach.cosmicreach.lang.Lang;
 import finalforeach.cosmicreach.settings.Controls;
 import finalforeach.cosmicreach.ui.*;
-import finalforeach.cosmicreach.ui.debug.DebugInfo;
 import finalforeach.cosmicreach.world.BlockSelection;
 import finalforeach.cosmicreach.world.Sky;
 import finalforeach.cosmicreach.world.World;
 import finalforeach.cosmicreach.world.Zone;
 import net.paxyinc.machines.item.inventories.PlayerInventory;
-import net.paxyinc.machines.item.renderers.PlayerInventoryRenderer;
-import net.paxyinc.machines.ui.InGameUI;
+import net.paxyinc.machines.ui.UI2;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -49,7 +41,7 @@ public abstract class InGameMixin extends GameState {
 
     @Inject(method = "create", at = @At("TAIL"))
     private void create(CallbackInfo ci) {
-        ui = new InGameUI();
+        ui = new UI2();
         Gdx.input.setInputProcessor(ui);
     }
 
