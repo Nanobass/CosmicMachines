@@ -3,13 +3,12 @@ package net.paxyinc.machines.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.insertsoda.craterchat.CraterChat;
-import dev.crmodders.flux.ui.util.ChildViewport;
+import dev.crmodders.flux.ui.Component;
+import dev.crmodders.flux.ui.UIRenderer;
 import finalforeach.cosmicreach.gamestates.GameState;
 import finalforeach.cosmicreach.gamestates.InGame;
 import finalforeach.cosmicreach.settings.Controls;
@@ -18,14 +17,12 @@ import finalforeach.cosmicreach.ui.UI;
 import finalforeach.cosmicreach.ui.debug.DebugInfo;
 import net.paxyinc.machines.item.*;
 import net.paxyinc.machines.item.inventories.MouseInventory;
-import net.paxyinc.machines.item.renderers.MouseInventoryRenderer;
-import org.checkerframework.checker.units.qual.C;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.paxyinc.machines.item.inventories.MouseInventory.mouseInventory;
 import static net.paxyinc.machines.item.inventories.PlayerInventory.inventory;
 
 public class UI2 extends UI {
@@ -34,7 +31,8 @@ public class UI2 extends UI {
     public OrthographicCamera uiCamera;
     public Crosshair crosshair = new Crosshair();
 
-    public static List<InGameUI> inGameUIs = new ArrayList<>();
+    public static List<ItemInventory> activeInventories = new ArrayList<>();
+    public static List<InGameUI> activeInGameUIs = new ArrayList<>();
 
     public boolean renderDebugInfo = false;
 
@@ -46,8 +44,8 @@ public class UI2 extends UI {
         uiViewport = new ExtendViewport(800.0F, 600.0F, this.uiCamera);
         uiViewport.apply();
 
-        inGameUIs.add(inventory.renderer.getUI());
-        inGameUIs.add(MouseInventory.mouseInventory.renderer.getUI());
+        activeInventories.add(inventory);
+        activeInventories.add(mouseInventory);
 
     }
 
@@ -66,7 +64,8 @@ public class UI2 extends UI {
         if(CraterChat.Chat.chatKeybind.isJustPressed() && !CraterChat.Chat.isOpen() && GameState.currentGameState instanceof InGame){
             CraterChat.Chat.toggle();
         }
-        mouseOverUI = uiNeedMouse = inventory.renderInventory;
+
+        mouseOverUI = uiNeedMouse = renderUI && (inventory.renderInventory || activeInventories.size() > 2 || !activeInGameUIs.isEmpty());
 
         Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
         uiViewport.unproject(mouse);
@@ -74,19 +73,27 @@ public class UI2 extends UI {
         Gdx.gl.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         if(renderUI) {
             crosshair.render(uiCamera);
-
-            if(uiNeedMouse && Gdx.input.isButtonJustPressed(0)) {
-                BaseItemElement atMouse = inventory.renderer.atMouse(mouse);
-                if(atMouse != null) ItemInventory.swapSlots(atMouse.slot, MouseInventory.mouseInventory.slots.get(0));
-            }
-
             uiViewport.apply();
             batch.setProjectionMatrix(uiCamera.combined);
 
-            for(InGameUI ui : inGameUIs) {
-                ui.render(uiViewport, uiCamera, mouse);
+            List<Component> uiElements = new ArrayList<>();
+            for(ItemInventory activeInventory : activeInventories) {
+                if(uiNeedMouse && Gdx.input.isButtonJustPressed(0) && activeInventory != mouseInventory) {
+                    BaseItemElement atMouse = activeInventory.renderer.atMouse(uiViewport, mouse);
+                    if(atMouse != null) ItemInventory.swapSlots(atMouse.slot, mouseInventory.slot);
+                }
+                InGameUI inventoryUI = activeInventory.renderer.getUI();
+                uiElements.addAll(inventoryUI.render(uiViewport, uiCamera, mouse));
                 uiViewport.apply();
             }
+
+            for(InGameUI ui : activeInGameUIs) {
+                List<? extends Component> e = ui.render(uiViewport, uiCamera, mouse);
+                uiElements.addAll(e);
+                uiViewport.apply();
+            }
+
+            UIRenderer.uiRenderer.render(uiElements, uiCamera, uiViewport, mouse);
 
             if (renderDebugInfo) {
                 batch.begin();

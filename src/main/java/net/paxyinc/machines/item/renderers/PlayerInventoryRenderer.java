@@ -7,10 +7,15 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import dev.crmodders.flux.api.gui.base.BaseText;
+import dev.crmodders.flux.ui.Component;
 import dev.crmodders.flux.ui.UIRenderer;
+import finalforeach.cosmicreach.ui.HorizontalAnchor;
+import finalforeach.cosmicreach.ui.VerticalAnchor;
 import net.paxyinc.machines.item.*;
 import net.paxyinc.machines.item.inventories.PlayerInventory;
 import net.paxyinc.machines.ui.BaseItemElement;
+import net.paxyinc.machines.util.BlockNameUtil;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
@@ -21,35 +26,61 @@ public class PlayerInventoryRenderer extends BasicInventoryRenderer {
 
     private List<BaseItemElement> hotbarInGame, hotbarInInventory, mainInventory, armorInInventory;
 
+    private BaseText selectedItemText;
+
     public PlayerInventoryRenderer(ItemInventory inventory) {
         super(inventory);
         hotbarInGame = createArea(PlayerInventory.HOTBAR, PlayerInventory.HOTBAR + 9);
         hotbarInInventory = createArea(PlayerInventory.HOTBAR, PlayerInventory.HOTBAR + 9);
         mainInventory = createArea(PlayerInventory.INVENTORY, PlayerInventory.INVENTORY + 27);
         armorInInventory = createArea(PlayerInventory.ARMOR, PlayerInventory.ARMOR + 4);
+
+        selectedItemText = new BaseText();
+        selectedItemText.setAnchors(HorizontalAnchor.CENTERED, VerticalAnchor.BOTTOM_ALIGNED);
+        selectedItemText.setBounds(0, -64, 320, 48);
+        selectedItemText.text = "";
+        selectedItemText.backgroundEnabled = false;
+        selectedItemText.soundEnabled = false;
+        selectedItemText.repaint();
+
     }
 
     @Override
-    public void render(Viewport uiViewport, Camera uiCamera, Vector2 mouse) {
+    public List<Component> render(Viewport uiViewport, Camera uiCamera, Vector2 mouse) {
         layoutAreaAroundCenterPoint(hotbarInGame ,9, 0, uiViewport.getWorldHeight() / 2.0F - 36F, 2, 32);
         layoutAreaAroundCenterPoint(hotbarInInventory, 9,0, 80, 2, 32);
         layoutAreaAroundCenterPoint(mainInventory, 9, 0, 0, 2, 32);
         layoutAreaAroundCenterPoint(armorInInventory, 1, -192F, -16F, 2, 32);
 
-        setState(positions, ItemSlotPositionState.DISABLED);
+        resetFlags(positions);
         if(PlayerInventory.inventory.renderInventory) {
-            setState(hotbarInInventory, ItemSlotPositionState.VISIBLE);
-            setState(mainInventory, ItemSlotPositionState.VISIBLE);
-            setState(armorInInventory, ItemSlotPositionState.VISIBLE);
+            setVisible(hotbarInInventory, true);
+            setVisible(mainInventory, true);
+            setVisible(armorInInventory, true);
         } else if(PlayerInventory.inventory.renderHotbar) {
-            setState(hotbarInGame, ItemSlotPositionState.VISIBLE);
+            setVisible(hotbarInGame, true);
         }
 
-        BaseItemElement atMouse = atMouse(mouse);
-        if(atMouse != null) {
-            orState(atMouse.slot, ItemSlotPositionState.HOVERED);
+        ItemSlot selected = PlayerInventory.inventory.getSelectedItem();
+        for(BaseItemElement pos : hotbarInGame) {
+            if(pos.slot.slotId == selected.slotId) pos.isSelected = true;
         }
-        orState(PlayerInventory.inventory.getSelectedItem(), ItemSlotPositionState.SELECTED);
-        super.render(uiViewport, uiCamera, mouse);
+
+        if(selected.itemStack != null && !PlayerInventory.inventory.renderInventory && PlayerInventory.inventory.renderHotbar) {
+            selectedItemText.text = BlockNameUtil.getNiceName(selected.itemStack.item.name);
+            selectedItemText.repaint();
+        } else {
+            selectedItemText.text = "";
+            selectedItemText.repaint();
+        }
+
+        List<Component> ui = super.render(uiViewport, uiCamera, mouse);
+        ui.add(selectedItemText);
+        return ui;
+    }
+
+    @Override
+    public BaseItemElement atMouse(Viewport viewport, Vector2 mouse) {
+        return PlayerInventory.inventory.renderInventory ? super.atMouse(viewport, mouse) : null;
     }
 }

@@ -26,6 +26,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
+import javax.swing.text.View;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -33,9 +34,10 @@ import java.util.function.Consumer;
 
 import static dev.crmodders.flux.ui.UIRenderer.uiRenderer;
 
-public class BasicInventoryRenderer extends InGameUI implements IItemInventoryRenderer {
+public class BasicInventoryRenderer implements InGameUI, IItemInventoryRenderer {
 
     protected final ItemInventory inventory;
+
     protected final List<BaseItemElement> positions;
 
     public BasicInventoryRenderer(ItemInventory inventory) {
@@ -52,29 +54,18 @@ public class BasicInventoryRenderer extends InGameUI implements IItemInventoryRe
             positions.add(element);
         }
         this.positions.addAll(positions);
-        this.uiElements.addAll(positions);
         return positions;
     }
 
-    public void setState(List<BaseItemElement> slots, ItemSlotPositionState state) {
-        slots.forEach(slot -> slot.state = state);
-    }
-
-    public void orState(ItemSlot slot, ItemSlotPositionState state) {
-        for(BaseItemElement pos : positions) {
-            if(pos.slot.slotId == slot.slotId && pos.state != ItemSlotPositionState.DISABLED) pos.state = state;
-        }
-    }
-
     public void layoutAreaAroundCenterPoint(List<BaseItemElement> slots, int wrapWidth, float centerX, float centerY, float padding, float size) {
-        float lineWidth = padding + wrapWidth * (size + padding);
+        float lineWidth = padding + (float) wrapWidth * (size + padding);
         float lineHeight = padding + (float)Math.ceil((float)slots.size() / (float)wrapWidth) * (size + padding);
         for(int index = 0; index < slots.size(); index++) {
             BaseItemElement position = slots.get(index);
-            int x = index % wrapWidth;
-            int y = index / wrapWidth;
-            position.x = padding + x * (size + padding) + centerX - lineWidth / 2.0F;
-            position.y = padding + y * (size + padding) + centerY - lineHeight / 2.0F;
+            float x = index % wrapWidth;
+            float y = index / wrapWidth;
+            position.x = padding + x * (size + padding) + centerX - lineWidth / 2.0F + size / 2;
+            position.y = padding + y * (size + padding) + centerY - lineHeight / 2.0F + size / 2;
             position.width = size;
             position.height = size;
         }
@@ -88,20 +79,32 @@ public class BasicInventoryRenderer extends InGameUI implements IItemInventoryRe
         return res;
     }
 
+    public void resetFlags(List<BaseItemElement> positions) {
+        for(BaseItemElement pos : positions) {
+            pos.visible = false;
+            pos.isSelected = false;
+        }
+    }
+
+    public void setVisible(List<BaseItemElement> positions, boolean visible) {
+        positions.forEach(i -> i.visible = visible);
+    }
+
     @Override
     public InGameUI getUI() {
         return this;
     }
 
     @Override
-    public void render(Viewport uiViewport, Camera uiCamera, Vector2 mouse) {
-        positions.forEach(BaseItemElement::repaint);
-        super.render(uiViewport, uiCamera, mouse);
+    public List<Component> render(Viewport uiViewport, Camera uiCamera, Vector2 mouse) {
+        List<Component> components = new ArrayList<>();
+        positions.forEach(components::add);
+        return components;
     }
 
-    public BaseItemElement atMouse(Vector2 mouse) {
+    public BaseItemElement atMouse(Viewport viewport, Vector2 mouse) {
         for(BaseItemElement pos : positions) {
-            if(pos.contains(mouse) && pos.state != ItemSlotPositionState.DISABLED) return pos;
+            if(pos.isHoveredOver(viewport, mouse.x, mouse.y) && pos.visible) return pos;
         }
         return null;
     }

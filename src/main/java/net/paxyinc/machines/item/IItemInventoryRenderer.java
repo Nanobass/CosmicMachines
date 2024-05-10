@@ -12,6 +12,6 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 public interface IItemInventoryRenderer {
 
     InGameUI getUI();
-    BaseItemElement atMouse(Vector2 mouse);
+    BaseItemElement atMouse(Viewport viewport, Vector2 mouse);
 
 }

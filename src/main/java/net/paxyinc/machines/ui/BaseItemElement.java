@@ -14,7 +14,6 @@ import dev.crmodders.flux.ui.text.TextBatch;
 import dev.crmodders.flux.ui.util.ChildViewport;
 import net.paxyinc.machines.item.IItemView;
 import net.paxyinc.machines.item.ItemSlot;
-import net.paxyinc.machines.item.ItemSlotPositionState;
 import net.paxyinc.machines.util.BlockNameUtil;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -43,17 +42,19 @@ public class BaseItemElement extends BaseElement {
     }
 
     public ItemSlot slot;
-    public ItemSlotPositionState state = ItemSlotPositionState.VISIBLE;
-    public boolean renderAmount, renderName;
+    public boolean shouldRenderBackground = true, shouldRenderAmount = true, shouldRenderName = true;
+    public boolean isHoveredOver, isSelected;
     private TextBatch name, amount;
-    private ShapeBatch background;
+    private ShapeBatch background, hovered, selected;
 
     public BaseItemElement(ItemSlot slot) {
         this.slot = slot;
     }
 
-    public boolean contains(Vector2 p) {
-        return p.x >= x && p.x < x + width && p.y >= y && p.y < y + height;
+    @Override
+    public void update(UIRenderer renderer, Viewport viewport, Vector2 mouse) {
+        repaint();
+        super.update(renderer, viewport, mouse);
     }
 
     @Override
@@ -63,52 +64,82 @@ public class BaseItemElement extends BaseElement {
         background.fillRect(0, 0, width, height);
         this.background = background.build();
 
-        if(slot.itemStack == null) {
+        ShapeBatchBuilder hovered = new ShapeBatchBuilder();
+        hovered.color(itemHighlightedColor);
+        hovered.fillRect(0, 0, width, height);
+        this.hovered = hovered.build();
+
+        ShapeBatchBuilder selected = new ShapeBatchBuilder();
+        selected.color(itemHighlightedColor);
+        selected.lineThickness(4);
+        selected.drawRect(0, 0, width, height);
+        this.selected = selected.build();
+
+        if(slot.itemStack != null) {
+            name = renderer.createText(BlockNameUtil.getNiceName(slot.itemStack.item.name), Color.WHITE);
+            amount = renderer.createText(UIRenderer.font, 12.0F, String.valueOf(slot.itemStack.amount), Color.WHITE);
+        } else {
             name = null;
             amount = null;
-            return;
         }
-        renderAmount = slot.itemStack.amount > 1;
-        name = renderer.createText(BlockNameUtil.getNiceName(slot.itemStack.item.name), Color.WHITE);
-        amount = renderer.createText(UIRenderer.font, 12.0F, String.valueOf(slot.itemStack.amount), Color.WHITE);
+    }
+
+    @Override
+    public void drawBackground(UIRenderer renderer, Viewport viewport) {
+        if(!visible) return;
+        float x = getDisplayX(viewport);
+        float y = getDisplayY(viewport);
+        if(shouldRenderBackground) {
+            if(isHoveredOver) hovered.render(uiRenderer, x, y);
+            else background.render(uiRenderer, x, y);
+        }
     }
 
     @Override
     public void draw(UIRenderer renderer, Viewport uiViewport) {
-        if(state == ItemSlotPositionState.DISABLED) return;
-        background.render(uiRenderer, x, y);
-
-        if(slot.itemStack == null) return;
-
-        itemViewport.setScreenBounds(uiViewport, x, y + height , width, height);
-        itemViewport.apply();
-        {
-            Gdx.gl.glEnable(GL11.GL_CULL_FACE);
-            Gdx.gl.glCullFace(GL11.GL_BACK);
-            Gdx.gl.glEnable(GL11.GL_DEPTH_TEST);
-            Gdx.gl.glDepthFunc(GL11.GL_ALWAYS);
-            slot.itemStack.item.view.render(itemCamera);
-            Gdx.gl.glEnable(GL11.GL_DEPTH_TEST);
-            Gdx.gl.glDepthFunc(GL11.GL_LESS);
-            Gdx.gl.glEnable(GL11.GL_CULL_FACE);
-            Gdx.gl.glCullFace(GL11.GL_BACK);
-            Gdx.gl.glActiveTexture(GL13.GL_TEXTURE0);
-            Gdx.gl.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+        if(!visible) return;
+        float x = getDisplayX(uiViewport);
+        float y = getDisplayY(uiViewport);
+        if(slot.itemStack != null) {
+            renderer.prepareForCustomShader();
+            itemViewport.setScreenBounds(uiViewport, x, y + height, width, height);
+            itemViewport.apply();
+            {
+                Gdx.gl.glEnable(GL11.GL_CULL_FACE);
+                Gdx.gl.glCullFace(GL11.GL_BACK);
+                Gdx.gl.glEnable(GL11.GL_DEPTH_TEST);
+                Gdx.gl.glDepthFunc(GL11.GL_ALWAYS);
+                slot.itemStack.item.view.render(itemCamera);
+                Gdx.gl.glEnable(GL11.GL_DEPTH_TEST);
+                Gdx.gl.glDepthFunc(GL11.GL_LESS);
+                Gdx.gl.glEnable(GL11.GL_CULL_FACE);
+                Gdx.gl.glCullFace(GL11.GL_BACK);
+                Gdx.gl.glActiveTexture(GL13.GL_TEXTURE0);
+            }
+            uiViewport.apply();
+            renderer.resetAfterCustomShader();
         }
-        uiViewport.apply();
-        renderer.resetAfterCustomShader();
+    }
 
-        if(renderName) name.render(renderer, x, y + 32.0F);
-        if(renderAmount) amount.render(renderer, x, y + 18.0F);
+    @Override
+    public void drawOverlay(UIRenderer renderer, Viewport viewport) {
+        if(!visible) return;
+        float x = getDisplayX(viewport);
+        float y = getDisplayY(viewport);
+        if (shouldRenderBackground && isSelected) selected.render(uiRenderer, x, y);
+        if(slot.itemStack != null) {
+            if (shouldRenderName && isHoveredOver) name.render(renderer, x, y + 32.0F);
+            if (shouldRenderAmount && slot.itemStack.amount > 1) amount.render(renderer, x, y + 18.0F);
+        }
     }
 
     @Override
     public void onMouseEnter() {
-        renderName = true;
+        isHoveredOver = true;
     }
 
     @Override
     public void onMouseExit() {
-        renderName = false;
+        isHoveredOver = false;
     }
 }

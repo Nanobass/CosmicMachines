@@ -10,12 +10,6 @@ import dev.crmodders.flux.ui.UIRenderer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InGameUI {
-
-    public List<Component> uiElements = new ArrayList<>();
-
-    public void render(Viewport uiViewport, Camera uiCamera, Vector2 mouse) {
-        UIRenderer.uiRenderer.render(uiElements, uiCamera, uiViewport, mouse);
-    }
-
+public interface InGameUI {
+    List<Component> render(Viewport uiViewport, Camera uiCamera, Vector2 mouse);
 }
