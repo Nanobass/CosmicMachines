@@ -3,7 +3,12 @@ A Quilt Mod that adds lots of stuff needed for a nice experience such as Invento
 Energy Systems, brand new (ugly) UI, "survival" and "creative" mode, but also lots of internal
 changes such as ticked blocks, item inventories and renderers, crafting and block menus.
 The core of this Mod is Machines. It includes Generator, Factories, Furnaces, Crafting,
-Batteries and everything known from popular Minecraft Mods,
+Batteries and everything known from popular Minecraft Mods.
+# Testing
+If you're interested in testing my mod, then you need a few things:
+- Download the v6 branch of FluxAPI and build a local Jar, then edit the
+*dirs* variable on line 63 in *build.gradle* to your build directory for FluxAPI
+- Now you can run the mod by launching the runQuilt gradle target
 # Warning
 This mod is a highly unstable beta running on an unreleased version 
 of FluxAPI 6.0 (will be available on release), FluxAPI 6.0 is not stable / tested yet and can corrupt / break worlds
