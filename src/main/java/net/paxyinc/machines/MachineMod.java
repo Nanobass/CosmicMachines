@@ -10,7 +10,7 @@ import net.fabricmc.api.ModInitializer;
 import net.paxyinc.machines.content.blocks.AutoSmelterBlock;
 import net.paxyinc.machines.content.blocks.CableBlock;
 import net.paxyinc.machines.entities.IModTileEntity;
-import net.paxyinc.machines.entities.TileEntityManager;
+import net.paxyinc.machines.entities.TileEntityRegistry;
 import net.paxyinc.machines.item.Item;
 import net.paxyinc.machines.item.ItemRegistry;
 import net.paxyinc.machines.item.items.BlockItem;
@@ -31,9 +31,6 @@ public class MachineMod implements ModInitializer {
     }
 
     public void onFluxPreInit() {
-        GameEvents.BEFORE_GAME_IS_TICKED.register(TileEntityManager.MANAGER);
-        GameEvents.AFTER_BLOCK_IS_PLACED.register(TileEntityManager.MANAGER);
-        GameEvents.BEFORE_BLOCK_IS_BROKEN.register(TileEntityManager.MANAGER);
     }
 
     public void onFluxInit() {
@@ -45,7 +42,7 @@ public class MachineMod implements ModInitializer {
         AccessableRegistry<IModBlock> blocks = FluxRegistries.BLOCKS.access();
         for(Identifier blockId : blocks.getRegisteredNames()) {
             if(blocks.get(blockId) instanceof IModTileEntity tileEntity) {
-                TileEntityManager.BLOCK_TILE_ENTITY_FACTORIES.register(blockId, tileEntity.getTileEntityFactory());
+                TileEntityRegistry.BLOCK_TILE_ENTITY_FACTORIES.register(blockId, tileEntity.getTileEntityFactory());
             }
         }
 

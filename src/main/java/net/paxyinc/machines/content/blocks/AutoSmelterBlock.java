@@ -1,29 +1,14 @@
 package net.paxyinc.machines.content.blocks;
 
-import dev.crmodders.flux.api.block.IModBlock;
 import dev.crmodders.flux.api.generators.BasicCubeModelGenerator;
 import dev.crmodders.flux.api.generators.BlockGenerator;
 import dev.crmodders.flux.api.generators.BlockModelGenerator;
 import dev.crmodders.flux.api.resource.ResourceLocation;
 import dev.crmodders.flux.tags.Identifier;
-import finalforeach.cosmicreach.blocks.Block;
-import finalforeach.cosmicreach.blocks.BlockPosition;
-import finalforeach.cosmicreach.blocks.BlockState;
-import finalforeach.cosmicreach.entities.Player;
-import finalforeach.cosmicreach.world.Zone;
 import net.paxyinc.machines.MachineMod;
 import net.paxyinc.machines.content.machines.AutoSmelter;
 import net.paxyinc.machines.entities.IModTileEntity;
 import net.paxyinc.machines.entities.TileEntity;
-import net.paxyinc.machines.entities.TileEntityManager;
-import net.paxyinc.machines.item.IEntityInventory;
-import net.paxyinc.machines.item.Item;
-import net.paxyinc.machines.item.ItemInventory;
-import net.paxyinc.machines.item.ItemSlot;
-import net.paxyinc.machines.item.inventories.FurnaceInventory;
-import net.paxyinc.machines.machines.BaseMachine;
-import net.paxyinc.machines.ui.BlockInventoryUI;
-import net.paxyinc.machines.ui.UI2;
 
 import java.util.List;
 import java.util.function.Supplier;

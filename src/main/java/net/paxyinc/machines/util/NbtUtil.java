@@ -2,10 +2,8 @@ package net.paxyinc.machines.util;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
-import net.querz.nbt.tag.CompoundTag;
-import net.querz.nbt.tag.FloatTag;
-import net.querz.nbt.tag.ListTag;
-import net.querz.nbt.tag.Tag;
+import finalforeach.cosmicreach.blocks.BlockPosition;
+import net.querz.nbt.tag.*;
 import org.checkerframework.checker.units.qual.C;
 
 import java.util.List;

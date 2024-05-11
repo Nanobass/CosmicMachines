@@ -7,6 +7,7 @@ import dev.crmodders.flux.api.generators.BlockModelGenerator;
 import dev.crmodders.flux.api.resource.ResourceLocation;
 import dev.crmodders.flux.tags.Identifier;
 import finalforeach.cosmicreach.blocks.Block;
+import finalforeach.cosmicreach.blocks.BlockPosition;
 import finalforeach.cosmicreach.entities.Player;
 import finalforeach.cosmicreach.world.Zone;
 import net.paxyinc.machines.MachineMod;
@@ -67,7 +68,8 @@ public class AutoSmelter extends BaseMachine implements IEntityInventory {
     public void onTick(Zone zone) {
         powerState = false;
         super.onTick(zone);
-        Block block = Block.blocksByStringId.get(AutoSmelterBlock.BLOCK_ID.toString());
+        BlockPosition position = getPosition(zone);
+        Block block = position.getBlockState().getBlock();
         if(powerState && !lastPowerState) {
             position.setBlockState(block.blockStates.get("on"));
             position.flagTouchingChunksForRemeshing(zone, true);
@@ -87,7 +89,7 @@ public class AutoSmelter extends BaseMachine implements IEntityInventory {
 
     @Override
     public void onDestroy(Zone zone) {
-        ItemEntity.dropItems(zone, position, inventory);
+        ItemEntity.dropItems(zone, getPosition(zone), inventory);
     }
 
     @Override

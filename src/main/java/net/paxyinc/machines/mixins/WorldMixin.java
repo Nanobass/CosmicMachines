@@ -5,6 +5,7 @@ import finalforeach.cosmicreach.entities.Player;
 import finalforeach.cosmicreach.world.World;
 import finalforeach.cosmicreach.world.Zone;
 import net.paxyinc.machines.entities.BetterEntity;
+import net.paxyinc.machines.entities.TileEntity;
 import net.paxyinc.machines.interfaces.WorldInterface;
 import net.paxyinc.machines.interfaces.ZoneInterface;
 import net.paxyinc.machines.io.AdvancedEntitySaveSystem;
@@ -24,6 +25,13 @@ public class WorldMixin implements WorldInterface {
     @Shadow public long worldSeed = (new Random()).nextLong();
 
     private final Map<UUID, Player> allPlayers = new HashMap<>();
+
+    @Override
+    public void initialize() {
+        World world = (World) (Object) this;
+        AdvancedEntitySaveSystem.loadEntities(world);
+        AdvancedEntitySaveSystem.loadTileEntities(world);
+    }
 
     @Override
     public Player loadPlayer(UUID uuid) {
@@ -62,8 +70,8 @@ public class WorldMixin implements WorldInterface {
     }
 
     @Override
-    public List<Player> getPlayers() {
-        return new ArrayList<>(allPlayers.values());
+    public Map<UUID, Player> getPlayers() {
+        return allPlayers;
     }
 
 }

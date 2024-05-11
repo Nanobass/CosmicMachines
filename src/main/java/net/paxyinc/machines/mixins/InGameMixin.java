@@ -7,11 +7,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import finalforeach.cosmicreach.BlockGame;
 import finalforeach.cosmicreach.GameSingletons;
 import finalforeach.cosmicreach.entities.Entity;
 import finalforeach.cosmicreach.entities.Player;
 import finalforeach.cosmicreach.gamestates.GameState;
 import finalforeach.cosmicreach.gamestates.InGame;
+import finalforeach.cosmicreach.gamestates.LoadingGame;
 import finalforeach.cosmicreach.gamestates.PauseMenu;
 import finalforeach.cosmicreach.io.SaveLocation;
 import finalforeach.cosmicreach.lang.Lang;
@@ -23,6 +25,7 @@ import net.paxyinc.machines.entities.BetterEntity;
 import net.paxyinc.machines.entities.IRenderableEntity;
 import net.paxyinc.machines.entities.ItemEntity;
 import net.paxyinc.machines.interfaces.WorldInterface;
+import net.paxyinc.machines.interfaces.ZoneInterface;
 import net.paxyinc.machines.io.AdvancedEntitySaveSystem;
 import net.paxyinc.machines.item.inventories.PlayerInventory;
 import net.paxyinc.machines.ui.UI2;
@@ -51,7 +54,7 @@ public abstract class InGameMixin extends GameState {
     @Overwrite
     public void loadWorld(World world) {
         InGame.world = world;
-        AdvancedEntitySaveSystem.loadEntities(world);
+
         // join as local player TODO change this
         WorldInterface wi = (WorldInterface) InGame.world;
         Player localPlayer = wi.loadPlayer(LOCAL_PLAYER_UUID);
@@ -99,7 +102,6 @@ public abstract class InGameMixin extends GameState {
         if(InGameMixin.player != null) InGameMixin.player.updateCamera(rawWorldCamera, 0.0F);
     }
 
-
     @Overwrite
     public void create() {
         super.create();
@@ -123,10 +125,8 @@ public abstract class InGameMixin extends GameState {
             }
 
             for (Zone z : world.getZones()) {
-                z.runScheduledTriggers();
-                for (Entity e : z.allEntities) {
-                    e.update(z, deltaTime);
-                }
+                ZoneInterface zi = (ZoneInterface) z;
+                zi.update(deltaTime);
             }
 
         }

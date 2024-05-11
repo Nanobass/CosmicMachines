@@ -11,6 +11,7 @@ import java.util.Map;
 
 public class BaseBattery extends TileEntity implements IEnergyConsumer, IEnergyProducer {
 
+    protected Map<Direction, TileEntity> neighbors = new HashMap<>();
     protected EnergyStorage battery;
     protected Map<Direction, SideType> energySides = SideType.createSideTypes(SideType.Combined);
 
@@ -34,6 +35,7 @@ public class BaseBattery extends TileEntity implements IEnergyConsumer, IEnergyP
 
     @Override
     public void onTick(Zone zone) {
+        super.onTick(zone);
         int canProduce, canConsume;
         for(Map.Entry<Direction, TileEntity> entry : neighbors.entrySet()) {
             Direction face = entry.getKey();

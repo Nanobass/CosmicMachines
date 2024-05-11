@@ -1,6 +1,8 @@
 package net.paxyinc.machines.machines;
 
 
+import finalforeach.cosmicreach.blocks.Block;
+import finalforeach.cosmicreach.blocks.BlockPosition;
 import finalforeach.cosmicreach.blocks.BlockState;
 import finalforeach.cosmicreach.constants.Direction;
 import finalforeach.cosmicreach.world.Zone;
@@ -11,9 +13,9 @@ import net.paxyinc.machines.entities.TileEntity;
 import net.paxyinc.machines.util.DirectionUtil;
 import net.querz.nbt.tag.CompoundTag;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import static net.paxyinc.machines.entities.TileEntityManager.MANAGER;
 import static net.paxyinc.machines.util.DirectionUtil.ALL_DIRECTION_NAMES;
 import static net.paxyinc.machines.util.DirectionUtil.ALL_DIRECTION_NAMES_INVERSE;
 
@@ -39,6 +41,7 @@ public class BaseCable extends TileEntity implements IEnergyProducer, IEnergyCon
 
     @Override
     public void onCreate(Zone zone) {
+        super.onCreate(zone);
         setModelConnection(zone, neighbors.keySet());
         for(Map.Entry<Direction, TileEntity> entry : neighbors.entrySet()) {
             Direction face = entry.getKey();
@@ -114,12 +117,16 @@ public class BaseCable extends TileEntity implements IEnergyProducer, IEnergyCon
 
 
     public void setModelConnection(Zone zone, Iterable<Direction> faces) {
+        BlockPosition position = getPosition(zone);
+        Block block = position.getBlockState().getBlock();
         int mask = DirectionUtil.mask(faces);
         String name = ALL_DIRECTION_NAMES.get(mask);
         position.setBlockState(block.blockStates.get(name));
     }
 
     public void addModelConnection(Zone zone, Direction toAdd) {
+        BlockPosition position = getPosition(zone);
+        Block block = position.getBlockState().getBlock();
         BlockState state = position.getBlockState();
         int mask = ALL_DIRECTION_NAMES_INVERSE.getOrDefault(state.stringId, 63);
         mask |= DirectionUtil.mask(toAdd);
@@ -128,6 +135,8 @@ public class BaseCable extends TileEntity implements IEnergyProducer, IEnergyCon
     }
 
     public void removeModelConnection(Zone zone, Direction toRemove) {
+        BlockPosition position = getPosition(zone);
+        Block block = position.getBlockState().getBlock();
         BlockState state = position.getBlockState();
         int mask = ALL_DIRECTION_NAMES_INVERSE.getOrDefault(state.stringId, 63);
         mask &= ~DirectionUtil.mask(toRemove);

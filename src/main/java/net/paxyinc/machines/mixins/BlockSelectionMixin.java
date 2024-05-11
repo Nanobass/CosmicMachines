@@ -11,32 +11,26 @@ import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Queue;
 import dev.crmodders.flux.tags.Identifier;
-import finalforeach.cosmicreach.blockevents.BlockEventTrigger;
-import finalforeach.cosmicreach.blocks.Block;
 import finalforeach.cosmicreach.blocks.BlockPosition;
 import finalforeach.cosmicreach.blocks.BlockState;
 import finalforeach.cosmicreach.entities.Entity;
 import finalforeach.cosmicreach.gamestates.InGame;
-import finalforeach.cosmicreach.items.ItemBlock;
 import finalforeach.cosmicreach.settings.Controls;
 import finalforeach.cosmicreach.ui.UI;
 import finalforeach.cosmicreach.world.BlockSelection;
 import finalforeach.cosmicreach.world.Chunk;
 import finalforeach.cosmicreach.world.Zone;
 import net.paxyinc.machines.entities.ItemEntity;
-import net.paxyinc.machines.entities.TileEntityManager;
+import net.paxyinc.machines.entities.TileEntityRegistry;
+import net.paxyinc.machines.interfaces.ZoneInterface;
 import net.paxyinc.machines.item.Item;
 import net.paxyinc.machines.item.ItemRegistry;
 import net.paxyinc.machines.item.ItemSlot;
-import net.paxyinc.machines.item.ItemStack;
 import net.paxyinc.machines.item.inventories.PlayerInventory;
 import net.paxyinc.machines.item.items.BlockItem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Mixin(BlockSelection.class)
 public abstract class BlockSelectionMixin {
@@ -63,6 +57,7 @@ public abstract class BlockSelectionMixin {
 
     @Overwrite
     public void raycast(Zone zone, Camera worldCamera) {
+        ZoneInterface zi = (ZoneInterface) zone;
         enabled = false;
         if (!UI.mouseOverUI) {
             BlockPosition placingBlockPos = null;
@@ -213,6 +208,7 @@ public abstract class BlockSelectionMixin {
 
             if (breakingBlockPos != null && breakPressed) {
                 Identifier blockId = Identifier.fromString(breakingBlockPos.getBlockState().getBlockId());
+                zi.onBlockBroken(zone, breakingBlockPos, timeSinceBlockModify);
                 this.breakBlock(zone, breakingBlockPos, this.timeSinceBlockModify);
                 Item item = ItemRegistry.allItems.access().get(blockId);
                 // TODO spawning item here
@@ -241,11 +237,12 @@ public abstract class BlockSelectionMixin {
                     // TODO place block here
                     if(slot.take(1)) {
                         this.placeBlock(zone, targetBlockState, placingBlockPos, this.timeSinceBlockModify);
+                        zi.onBlockPlaced(zone, targetBlockState, placingBlockPos, timeSinceBlockModify);
                     }
                 }
             } else if (breakingBlockPos != null && (interactJustPressed || placePressed)) {
                 this.interactWith(zone, breakingBlockPos, interactJustPressed, placePressed, this.timeSinceBlockModify);
-                TileEntityManager.MANAGER.onBlockInteract(zone, breakingBlockPos, InGame.getLocalPlayer(), timeSinceBlockModify);
+                zi.onBlockInteract(zone, breakingBlockPos, InGame.getLocalPlayer(), timeSinceBlockModify);
                 this.timeSinceBlockModify = 0.25;
             }
 

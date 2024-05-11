@@ -10,7 +10,8 @@
     "PlayerMixin",
     "EntitySaveSystemMixin",
     "WorldMixin",
-    "ZoneMixin"
+    "ZoneMixin",
+    "GameStateMixin"
   ],
   "client": [],
   "server": [],

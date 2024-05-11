@@ -39,6 +39,7 @@ public class BaseGenerator extends TileEntity implements IEnergyProducer {
 
     @Override
     public void onTick(Zone zone) {
+        super.onTick(zone);
         int canProduce, canConsume;
 
         if(canGenerate()) {

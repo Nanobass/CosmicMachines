@@ -27,6 +27,8 @@ public class EntitySaveSystemMixin {
     @Overwrite
     public static void savePlayers(World world) {
         AdvancedEntitySaveSystem.saveEntities(world);
+        AdvancedEntitySaveSystem.saveTileEntities(world);
+        AdvancedEntitySaveSystem.savePlayers(world);
         System.err.println("Usage of savePlayers is deprecated");
     }
 

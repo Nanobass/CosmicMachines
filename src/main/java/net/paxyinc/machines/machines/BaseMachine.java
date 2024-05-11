@@ -35,6 +35,7 @@ public class BaseMachine extends TileEntity implements IEnergyConsumer {
 
     @Override
     public void onTick(Zone zone) {
+        super.onTick(zone);
         int canProduce = battery.produce(energyNeededToTick, false);
         if(canProduce >= energyNeededToTick) {
             battery.produce(canProduce, true);
