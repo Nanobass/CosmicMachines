@@ -15,5 +15,6 @@ public abstract class AbstractItemList implements Iterable<Item> {
     public abstract boolean take(AbstractItemList list);
     public abstract int amount(Item item);
     public abstract int amount(Identifier tag);
+    public abstract void clear();
 
 }

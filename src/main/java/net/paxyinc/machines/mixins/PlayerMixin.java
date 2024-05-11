@@ -76,6 +76,7 @@ public class PlayerMixin implements NbtSerializable, PlayerInterface {
         zoneId = nbt.getString("zoneId");
         controlledEntityUUID = UUID.fromString(nbt.getString("controlledEntity"));
         CompoundTag inventory = nbt.getCompoundTag("inventory");
+        PlayerInventory.inventory.clear();
         PlayerInventory.inventory.read(inventory);
     }
 

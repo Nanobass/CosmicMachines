@@ -157,6 +157,11 @@ public class ItemInventory extends AbstractItemList implements NbtSerializable {
     }
 
     @Override
+    public void clear() {
+        for(ItemSlot slot : slots) slot.itemStack = null;
+    }
+
+    @Override
     public void write(CompoundTag nbt) {
         for(ItemSlot slot : slots) {
             if(slot.itemStack != null) {

@@ -114,4 +114,9 @@ public class ItemList extends AbstractItemList {
     public Iterator<Item> iterator() {
         return stacks.stream().map(stack -> stack.item).iterator();
     }
+
+    @Override
+    public void clear() {
+        stacks.clear();
+    }
 }
