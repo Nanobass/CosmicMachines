@@ -1,7 +1,5 @@
 package net.paxyinc.machines.item;
 
-import org.jetbrains.annotations.NotNull;
-
 public class ItemSlot implements Comparable<ItemSlot> {
 
     public final ItemInventory container;

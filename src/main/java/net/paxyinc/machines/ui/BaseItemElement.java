@@ -17,7 +17,6 @@ import net.paxyinc.machines.item.ItemSlot;
 import net.paxyinc.machines.util.BlockNameUtil;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
-import org.quiltmc.loader.util.sat4j.core.Vec;
 
 import static dev.crmodders.flux.ui.UIRenderer.uiRenderer;
 
