@@ -2,12 +2,14 @@ package net.paxyinc.machines.item;
 
 import dev.crmodders.flux.tags.Identifier;
 import net.paxyinc.machines.item.lists.ItemList;
+import net.paxyinc.machines.nbt.NbtSerializable;
+import net.querz.nbt.tag.CompoundTag;
 
 import java.util.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class ItemInventory extends AbstractItemList {
+public class ItemInventory extends AbstractItemList implements NbtSerializable<ItemInventory> {
 
 
     // TODO finish this
@@ -152,5 +154,35 @@ public class ItemInventory extends AbstractItemList {
         Set<Item> items = new HashSet<>();
         slots.stream().filter(slot -> slot.itemStack != null).forEach(slot -> items.add(slot.itemStack.item));
         return items.iterator();
+    }
+
+    @Override
+    public void read(CompoundTag nbt) {
+        CompoundTag inventory = new CompoundTag();
+        for(ItemSlot slot : slots) {
+            if(slot.itemStack != null) {
+                CompoundTag slotTag = new CompoundTag();
+                slotTag.putString("itemId", slot.itemStack.item.itemId.toString());
+                slotTag.putInt("amount", slot.itemStack.amount);
+                slotTag.putInt("max", slot.itemStack.max);
+                inventory.put(String.valueOf(slot.slotId), slotTag);
+            }
+        }
+        nbt.put("inventory", inventory);
+    }
+
+    @Override
+    public void write(CompoundTag nbt) {
+        CompoundTag inventory = nbt.getCompoundTag("inventory");
+        for(ItemSlot slot : slots) {
+            String slotId = String.valueOf(slot.slotId);
+            if(inventory.containsKey(slotId)) {
+                CompoundTag slotTag = inventory.getCompoundTag(slotId);
+                Item item = ItemRegistry.allItems.access().get(Identifier.fromString(slotTag.getString("itemId")));
+                int amount = slotTag.getInt("amount");
+                int max = slotTag.getInt("max");
+                slot.itemStack = new ItemStack(item, amount, max);
+            }
+        }
     }
 }
