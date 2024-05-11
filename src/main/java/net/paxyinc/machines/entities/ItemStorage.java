@@ -7,7 +7,7 @@ import net.paxyinc.machines.item.ItemInventory;
 import net.paxyinc.machines.nbt.NbtSerializable;
 import net.querz.nbt.tag.CompoundTag;
 
-public class ItemStorage implements IItemStorage, NbtSerializable<ItemStorage> {
+public class ItemStorage implements IItemStorage, NbtSerializable {
 
     public ItemInventory inventory;
     public int maxConsume;

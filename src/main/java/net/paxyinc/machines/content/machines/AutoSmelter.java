@@ -11,6 +11,7 @@ import finalforeach.cosmicreach.entities.Player;
 import finalforeach.cosmicreach.world.Zone;
 import net.paxyinc.machines.MachineMod;
 import net.paxyinc.machines.content.blocks.AutoSmelterBlock;
+import net.paxyinc.machines.entities.ItemEntity;
 import net.paxyinc.machines.item.Item;
 import net.paxyinc.machines.item.inventories.FurnaceInventory;
 import net.paxyinc.machines.machines.BaseMachine;
@@ -19,6 +20,7 @@ import net.paxyinc.machines.item.ItemInventory;
 import net.paxyinc.machines.item.ItemSlot;
 import net.paxyinc.machines.ui.BlockInventoryUI;
 import net.paxyinc.machines.ui.UI2;
+import net.querz.nbt.tag.CompoundTag;
 
 import java.util.List;
 
@@ -35,6 +37,18 @@ public class AutoSmelter extends BaseMachine implements IEntityInventory {
 
     boolean powerState = false;
     boolean lastPowerState = false;
+
+    @Override
+    public void read(CompoundTag nbt) {
+        super.read(nbt);
+        inventory.read(nbt);
+    }
+
+    @Override
+    public void write(CompoundTag nbt) {
+        super.write(nbt);
+        inventory.write(nbt);
+    }
 
     @Override
     public void onPoweredTick(Zone zone) {
@@ -69,6 +83,11 @@ public class AutoSmelter extends BaseMachine implements IEntityInventory {
     @Override
     public void onInteract(Zone zone, Player player) {
         UI2.openBlockUI(ui);
+    }
+
+    @Override
+    public void onDestroy(Zone zone) {
+        ItemEntity.dropItems(zone, position, inventory);
     }
 
     @Override

@@ -24,7 +24,6 @@ import finalforeach.cosmicreach.world.BlockSelection;
 import finalforeach.cosmicreach.world.Chunk;
 import finalforeach.cosmicreach.world.Zone;
 import net.paxyinc.machines.entities.ItemEntity;
-import net.paxyinc.machines.entities.RenderableEntity;
 import net.paxyinc.machines.entities.TileEntityManager;
 import net.paxyinc.machines.item.Item;
 import net.paxyinc.machines.item.ItemRegistry;
@@ -217,9 +216,7 @@ public abstract class BlockSelectionMixin {
                 this.breakBlock(zone, breakingBlockPos, this.timeSinceBlockModify);
                 Item item = ItemRegistry.allItems.access().get(blockId);
                 // TODO spawning item here
-                ItemEntity entity = new ItemEntity(item, 1);
-                RenderableEntity.spawn(zone, breakingBlockPos.getGlobalX() + 0.5f, breakingBlockPos.getGlobalY() + 0.5f, breakingBlockPos.getGlobalZ() + 0.5f, entity);
-                entity.velocity.add(MathUtils.random(-2, 2), MathUtils.random(0, 1), MathUtils.random(-2, 2));
+                ItemEntity.dropItem(zone, breakingBlockPos, item, 1).velocity.add(MathUtils.random(-2, 2), MathUtils.random(0, 1), MathUtils.random(-2, 2));
                 this.timeSinceBlockModify = 0.25;
             }
 

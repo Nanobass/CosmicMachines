@@ -3,6 +3,7 @@ package net.paxyinc.machines.machines;
 import finalforeach.cosmicreach.constants.Direction;
 import finalforeach.cosmicreach.world.Zone;
 import net.paxyinc.machines.entities.*;
+import net.querz.nbt.tag.CompoundTag;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +17,20 @@ public class BaseGenerator extends TileEntity implements IEnergyProducer {
     public BaseGenerator(int capacity, int maxConsume, int maxProduce, int energyProducedWhenTicked) {
         battery = new EnergyStorage(capacity, maxConsume, maxProduce);
         this.energyProducedWhenTicked = energyProducedWhenTicked;
+    }
+
+    @Override
+    public void read(CompoundTag nbt) {
+        super.read(nbt);
+        battery.read(nbt);
+        // TODO energySides
+    }
+
+    @Override
+    public void write(CompoundTag nbt) {
+        super.write(nbt);
+        battery.write(nbt);
+        // TODO energySides
     }
 
     public boolean canGenerate() {

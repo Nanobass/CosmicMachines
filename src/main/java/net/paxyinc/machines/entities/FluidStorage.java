@@ -4,7 +4,7 @@ import net.paxyinc.machines.fluid.Fluid;
 import net.paxyinc.machines.nbt.NbtSerializable;
 import net.querz.nbt.tag.CompoundTag;
 
-public class FluidStorage implements IFluidStorage, NbtSerializable<FluidStorage> {
+public class FluidStorage implements IFluidStorage, NbtSerializable {
 
     public Fluid fluid;
     public int stored;

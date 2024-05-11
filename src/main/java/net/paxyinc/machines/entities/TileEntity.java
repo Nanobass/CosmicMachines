@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TileEntity implements NbtSerializable<TileEntity>, ITileEntityCapabilities {
+public class TileEntity implements NbtSerializable, ITileEntityCapabilities {
 
     protected BlockPosition position;
     protected BlockState blockState;

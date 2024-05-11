@@ -3,7 +3,7 @@ package net.paxyinc.machines.entities;
 import net.paxyinc.machines.nbt.NbtSerializable;
 import net.querz.nbt.tag.CompoundTag;
 
-public class EnergyStorage implements IEnergyStorage, NbtSerializable<EnergyStorage> {
+public class EnergyStorage implements IEnergyStorage, NbtSerializable {
 
     public int stored;
     public int capacity;

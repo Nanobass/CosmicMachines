@@ -9,6 +9,7 @@ import net.paxyinc.machines.entities.IEnergyConsumer;
 import net.paxyinc.machines.entities.IEnergyProducer;
 import net.paxyinc.machines.entities.TileEntity;
 import net.paxyinc.machines.util.DirectionUtil;
+import net.querz.nbt.tag.CompoundTag;
 
 import java.util.Map;
 
@@ -22,6 +23,18 @@ public class BaseCable extends TileEntity implements IEnergyProducer, IEnergyCon
 
     public BaseCable(int capacity, int maxTransfer) {
         battery = new EnergyStorage(capacity, maxTransfer, maxTransfer);
+    }
+
+    @Override
+    public void read(CompoundTag nbt) {
+        super.read(nbt);
+        battery.read(nbt);
+    }
+
+    @Override
+    public void write(CompoundTag nbt) {
+        super.write(nbt);
+        battery.write(nbt);
     }
 
     @Override
