@@ -1,29 +1,17 @@
 package net.paxyinc.machines.content.machines;
 
-import dev.crmodders.flux.api.block.IModBlock;
-import dev.crmodders.flux.api.generators.BasicCubeModelGenerator;
-import dev.crmodders.flux.api.generators.BlockGenerator;
-import dev.crmodders.flux.api.generators.BlockModelGenerator;
-import dev.crmodders.flux.api.resource.ResourceLocation;
-import dev.crmodders.flux.tags.Identifier;
-import finalforeach.cosmicreach.blocks.Block;
-import finalforeach.cosmicreach.blocks.BlockPosition;
 import finalforeach.cosmicreach.entities.Player;
 import finalforeach.cosmicreach.world.Zone;
-import net.paxyinc.machines.MachineMod;
-import net.paxyinc.machines.content.blocks.AutoSmelterBlock;
 import net.paxyinc.machines.entities.ItemEntity;
-import net.paxyinc.machines.item.Item;
-import net.paxyinc.machines.item.inventories.FurnaceInventory;
-import net.paxyinc.machines.machines.BaseMachine;
 import net.paxyinc.machines.item.IEntityInventory;
+import net.paxyinc.machines.item.Item;
 import net.paxyinc.machines.item.ItemInventory;
 import net.paxyinc.machines.item.ItemSlot;
+import net.paxyinc.machines.item.inventories.FurnaceInventory;
+import net.paxyinc.machines.machines.BaseMachine;
 import net.paxyinc.machines.ui.BlockInventoryUI;
 import net.paxyinc.machines.ui.UI2;
 import net.querz.nbt.tag.CompoundTag;
-
-import java.util.List;
 
 public class AutoSmelter extends BaseMachine implements IEntityInventory {
 
@@ -52,8 +40,8 @@ public class AutoSmelter extends BaseMachine implements IEntityInventory {
     }
 
     @Override
-    public void onPoweredTick(Zone zone) {
-        super.onPoweredTick(zone);
+    public void onPoweredTick() {
+        super.onPoweredTick();
         powerState = true;
 
         Item inputItem = input.getItem();
@@ -65,31 +53,29 @@ public class AutoSmelter extends BaseMachine implements IEntityInventory {
     }
 
     @Override
-    public void onTick(Zone zone) {
+    public void onTick() {
         powerState = false;
-        super.onTick(zone);
-        BlockPosition position = getPosition(zone);
-        Block block = position.getBlockState().getBlock();
+        super.onTick();
         if(powerState && !lastPowerState) {
             position.setBlockState(block.blockStates.get("on"));
-            position.flagTouchingChunksForRemeshing(zone, true);
+            position.flagTouchingChunksForRemeshing(position.chunk.region.zone, true);
             lastPowerState = powerState;
         }
         if(!powerState && lastPowerState) {
             position.setBlockState(block.blockStates.get("off"));
-            position.flagTouchingChunksForRemeshing(zone, true);
+            position.flagTouchingChunksForRemeshing(position.chunk.region.zone, true);
             lastPowerState = powerState;
         }
     }
 
     @Override
-    public void onInteract(Zone zone, Player player) {
+    public void onInteract(Player player) {
         UI2.openBlockUI(ui);
     }
 
     @Override
-    public void onDestroy(Zone zone) {
-        ItemEntity.dropItems(zone, getPosition(zone), inventory);
+    public void onDestroy() {
+        ItemEntity.dropItems(position.chunk.region.zone, position, inventory);
     }
 
     @Override

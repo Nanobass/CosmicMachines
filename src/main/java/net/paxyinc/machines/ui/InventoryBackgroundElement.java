@@ -1,7 +1,6 @@
 package net.paxyinc.machines.ui;
 
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.List;

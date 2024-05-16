@@ -5,7 +5,10 @@ import net.paxyinc.machines.item.lists.ItemList;
 import net.paxyinc.machines.nbt.NbtSerializable;
 import net.querz.nbt.tag.CompoundTag;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 

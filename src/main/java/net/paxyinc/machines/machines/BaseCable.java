@@ -1,25 +1,21 @@
 package net.paxyinc.machines.machines;
 
 
-import finalforeach.cosmicreach.blocks.Block;
-import finalforeach.cosmicreach.blocks.BlockPosition;
 import finalforeach.cosmicreach.blocks.BlockState;
 import finalforeach.cosmicreach.constants.Direction;
-import finalforeach.cosmicreach.world.Zone;
-import net.paxyinc.machines.entities.EnergyStorage;
-import net.paxyinc.machines.entities.IEnergyConsumer;
-import net.paxyinc.machines.entities.IEnergyProducer;
-import net.paxyinc.machines.entities.TileEntity;
+import net.paxyinc.machines.entities.FunctionalBlock;
+import net.paxyinc.machines.entities.system.EnergyStorage;
+import net.paxyinc.machines.entities.system.IEnergyConsumer;
+import net.paxyinc.machines.entities.system.IEnergyProducer;
 import net.paxyinc.machines.util.DirectionUtil;
 import net.querz.nbt.tag.CompoundTag;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static net.paxyinc.machines.util.DirectionUtil.ALL_DIRECTION_NAMES;
 import static net.paxyinc.machines.util.DirectionUtil.ALL_DIRECTION_NAMES_INVERSE;
 
-public class BaseCable extends TileEntity implements IEnergyProducer, IEnergyConsumer {
+public class BaseCable extends FunctionalBlock implements IEnergyProducer, IEnergyConsumer {
 
     protected EnergyStorage battery;
 
@@ -40,51 +36,51 @@ public class BaseCable extends TileEntity implements IEnergyProducer, IEnergyCon
     }
 
     @Override
-    public void onCreate(Zone zone) {
-        super.onCreate(zone);
-        setModelConnection(zone, neighbors.keySet());
-        for(Map.Entry<Direction, TileEntity> entry : neighbors.entrySet()) {
+    public void onCreate() {
+        super.onCreate();
+        setModelConnection(neighbors.keySet());
+        for(Map.Entry<Direction, FunctionalBlock> entry : neighbors.entrySet()) {
             Direction face = entry.getKey();
-            TileEntity neighbor = entry.getValue();
+            FunctionalBlock neighbor = entry.getValue();
             if(neighbor instanceof BaseCable cable) {
-                cable.addModelConnection(zone, DirectionUtil.opposite(face));
+                cable.addModelConnection(DirectionUtil.opposite(face));
             }
         }
     }
 
 
     @Override
-    public void onNeighborPlaced(Zone zone, Direction face, TileEntity entity) {
-        super.onNeighborPlaced(zone, face, entity);
+    public void onNeighborPlaced(Direction face, FunctionalBlock entity) {
+        super.onNeighborPlaced(face, entity);
         if(entity instanceof IEnergyProducer || entity instanceof IEnergyConsumer) {
-            addModelConnection(zone, face);
+            addModelConnection(face);
         }
     }
 
     @Override
-    public void onNeighborBroken(Zone zone, Direction face, TileEntity entity) {
-        super.onNeighborBroken(zone, face, entity);
+    public void onNeighborBroken(Direction face, FunctionalBlock entity) {
+        super.onNeighborBroken(face, entity);
         if(entity instanceof IEnergyProducer || entity instanceof IEnergyConsumer) {
-            removeModelConnection(zone, face);
+            removeModelConnection(face);
         }
     }
 
     @Override
-    public void onDestroy(Zone zone) {
-        for(Map.Entry<Direction, TileEntity> entry : neighbors.entrySet()) {
+    public void onDestroy() {
+        for(Map.Entry<Direction, FunctionalBlock> entry : neighbors.entrySet()) {
             Direction face = entry.getKey();
-            TileEntity neighbor = entry.getValue();
+            FunctionalBlock neighbor = entry.getValue();
             if(neighbor instanceof BaseCable cable) {
-                cable.removeModelConnection(zone, DirectionUtil.opposite(face));
+                cable.removeModelConnection(DirectionUtil.opposite(face));
             }
         }
     }
 
     @Override
-    public void onTick(Zone zone) {
-        for(Map.Entry<Direction, TileEntity> entry : neighbors.entrySet()) {
+    public void onTick() {
+        for(Map.Entry<Direction, FunctionalBlock> entry : neighbors.entrySet()) {
             Direction face = entry.getKey();
-            TileEntity neighbor = entry.getValue();
+            FunctionalBlock neighbor = entry.getValue();
             if(neighbor instanceof IEnergyConsumer consumer) {
                 int canProduce, canConsume;
                 canConsume = consumer.consume(face, battery.available(), false);
@@ -116,17 +112,13 @@ public class BaseCable extends TileEntity implements IEnergyProducer, IEnergyCon
     }
 
 
-    public void setModelConnection(Zone zone, Iterable<Direction> faces) {
-        BlockPosition position = getPosition(zone);
-        Block block = position.getBlockState().getBlock();
+    public void setModelConnection(Iterable<Direction> faces) {
         int mask = DirectionUtil.mask(faces);
         String name = ALL_DIRECTION_NAMES.get(mask);
         position.setBlockState(block.blockStates.get(name));
     }
 
-    public void addModelConnection(Zone zone, Direction toAdd) {
-        BlockPosition position = getPosition(zone);
-        Block block = position.getBlockState().getBlock();
+    public void addModelConnection(Direction toAdd) {
         BlockState state = position.getBlockState();
         int mask = ALL_DIRECTION_NAMES_INVERSE.getOrDefault(state.stringId, 63);
         mask |= DirectionUtil.mask(toAdd);
@@ -134,9 +126,7 @@ public class BaseCable extends TileEntity implements IEnergyProducer, IEnergyCon
         position.setBlockState(block.blockStates.get(neighborName));
     }
 
-    public void removeModelConnection(Zone zone, Direction toRemove) {
-        BlockPosition position = getPosition(zone);
-        Block block = position.getBlockState().getBlock();
+    public void removeModelConnection(Direction toRemove) {
         BlockState state = position.getBlockState();
         int mask = ALL_DIRECTION_NAMES_INVERSE.getOrDefault(state.stringId, 63);
         mask &= ~DirectionUtil.mask(toRemove);

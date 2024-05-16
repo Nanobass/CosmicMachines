@@ -7,13 +7,12 @@ import dev.crmodders.flux.api.resource.ResourceLocation;
 import dev.crmodders.flux.tags.Identifier;
 import net.paxyinc.machines.MachineMod;
 import net.paxyinc.machines.content.machines.AutoSmelter;
-import net.paxyinc.machines.entities.IModTileEntity;
-import net.paxyinc.machines.entities.TileEntity;
+import net.paxyinc.machines.entities.FunctionalBlock;
+import net.paxyinc.machines.entities.IFunctionalModBlock;
 
 import java.util.List;
-import java.util.function.Supplier;
 
-public class AutoSmelterBlock implements IModTileEntity {
+public class AutoSmelterBlock implements IFunctionalModBlock {
     public static final Identifier BLOCK_ID = new Identifier(MachineMod.MOD_ID, "smelter");
     public static final String BLOCK_NAME = "auto_smelter";
     public static final ResourceLocation TEXTURE_SIDE = new ResourceLocation("fluxapi", "textures/blocks/flux_furnace_side.png");
@@ -37,8 +36,7 @@ public class AutoSmelterBlock implements IModTileEntity {
     }
 
     @Override
-    public Supplier<TileEntity> getTileEntityFactory() {
-        return AutoSmelter::new;
+    public FunctionalBlock createFunctionalBlock() {
+        return new AutoSmelter();
     }
-
 }

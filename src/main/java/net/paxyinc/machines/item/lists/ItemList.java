@@ -5,7 +5,10 @@ import net.paxyinc.machines.item.AbstractItemList;
 import net.paxyinc.machines.item.Item;
 import net.paxyinc.machines.item.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class ItemList extends AbstractItemList {

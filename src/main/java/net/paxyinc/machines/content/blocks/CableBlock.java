@@ -1,6 +1,5 @@
 package net.paxyinc.machines.content.blocks;
 
-import dev.crmodders.flux.api.block.IModBlock;
 import dev.crmodders.flux.api.generators.BlockGenerator;
 import dev.crmodders.flux.api.generators.BlockModelGenerator;
 import dev.crmodders.flux.api.resource.ResourceLocation;
@@ -8,13 +7,12 @@ import dev.crmodders.flux.tags.Identifier;
 import net.paxyinc.machines.MachineMod;
 import net.paxyinc.machines.content.machines.Cable;
 import net.paxyinc.machines.content.models.CableModelGenerator;
-import net.paxyinc.machines.entities.IModTileEntity;
-import net.paxyinc.machines.entities.TileEntity;
+import net.paxyinc.machines.entities.FunctionalBlock;
+import net.paxyinc.machines.entities.IFunctionalModBlock;
 
 import java.util.List;
-import java.util.function.Supplier;
 
-public class CableBlock implements IModTileEntity {
+public class CableBlock implements IFunctionalModBlock {
 
     public static final Identifier BLOCK_ID = new Identifier(MachineMod.MOD_ID, "cable");
     public static final String BLOCK_NAME = "cable";
@@ -31,8 +29,8 @@ public class CableBlock implements IModTileEntity {
     }
 
     @Override
-    public Supplier<TileEntity> getTileEntityFactory() {
-        return Cable::new;
+    public FunctionalBlock createFunctionalBlock() {
+        return new Cable();
     }
 }
 

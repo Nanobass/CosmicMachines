@@ -1,28 +1,14 @@
 package net.paxyinc.machines.item.renderers;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import dev.crmodders.flux.ui.Component;
-import dev.crmodders.flux.ui.UIRenderer;
-import dev.crmodders.flux.ui.text.TextBatch;
-import net.paxyinc.machines.item.*;
-import net.paxyinc.machines.item.inventories.MouseInventory;
+import net.paxyinc.machines.item.IItemInventoryRenderer;
+import net.paxyinc.machines.item.ItemInventory;
 import net.paxyinc.machines.ui.BaseItemElement;
-import net.paxyinc.machines.ui.InGameUI;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-
-import javax.swing.text.View;
 
 import java.util.List;
-
-import static dev.crmodders.flux.ui.UIRenderer.uiRenderer;
 
 public class MouseInventoryRenderer implements IItemInventoryRenderer {
 

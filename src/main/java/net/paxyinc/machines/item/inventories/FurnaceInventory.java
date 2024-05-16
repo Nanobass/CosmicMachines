@@ -1,6 +1,5 @@
 package net.paxyinc.machines.item.inventories;
 
-import dev.crmodders.flux.tags.Identifier;
 import net.paxyinc.machines.item.ItemInventory;
 import net.paxyinc.machines.item.renderers.FurnaceInventoryRenderer;
 

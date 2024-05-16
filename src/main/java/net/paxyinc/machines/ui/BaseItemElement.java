@@ -12,7 +12,6 @@ import dev.crmodders.flux.ui.shapes.ShapeBatch;
 import dev.crmodders.flux.ui.shapes.ShapeBatchBuilder;
 import dev.crmodders.flux.ui.text.TextBatch;
 import dev.crmodders.flux.ui.util.ChildViewport;
-import net.paxyinc.machines.item.IItemView;
 import net.paxyinc.machines.item.ItemSlot;
 import net.paxyinc.machines.util.BlockNameUtil;
 import org.lwjgl.opengl.GL11;

@@ -1,46 +1,47 @@
 package net.paxyinc.machines.entities;
 
-import com.badlogic.gdx.graphics.Camera;
 import finalforeach.cosmicreach.entities.Entity;
-import finalforeach.cosmicreach.world.Zone;
-import net.paxyinc.machines.interfaces.ZoneInterface;
+import finalforeach.cosmicreach.world.Chunk;
+import finalforeach.cosmicreach.world.ChunkCoords;
+import finalforeach.cosmicreach.world.RegionCoords;
 import net.paxyinc.machines.nbt.NbtSerializable;
 import net.paxyinc.machines.util.NbtUtil;
 import net.querz.nbt.tag.CompoundTag;
 
 import java.util.UUID;
 
-public class BetterEntity extends Entity implements NbtSerializable, IRenderableEntity {
-
-    public static void spawn(Zone zone, float x, float y, float z, BetterEntity entity) {
-        entity.position.set(x, y, z);
-        entity.spawn(zone);
-    }
+public class BetterEntity extends Entity implements NbtSerializable {
 
     public UUID uuid = UUID.randomUUID();
+    public transient Chunk chunk;
+    public boolean savable = true;
 
     public UUID uuid() {
         return uuid;
     }
 
-    @Override
-    public void render(Camera camera) {
-
+    public RegionCoords getRegionPosition() {
+        int regionX = Math.floorDiv((int) position.x, 256);
+        int regionY = Math.floorDiv((int) position.y, 256);
+        int regionZ = Math.floorDiv((int) position.z, 256);
+        return new RegionCoords(regionX, regionY, regionZ);
     }
 
-    public void spawn(Zone zone) {
-        ZoneInterface zi = (ZoneInterface) zone;
-        zi.addEntity(this);
+    public ChunkCoords getChunkPositionYZero() {
+        int chunkX = Math.floorDiv((int) position.x, 16);
+        int chunkZ = Math.floorDiv((int) position.z, 16);
+        return new ChunkCoords(chunkX, 0, chunkZ);
     }
 
-    public void despawn(Zone zone) {
-        ZoneInterface zi = (ZoneInterface) zone;
-        zi.deleteEntity(uuid);
+    public ChunkCoords getChunkPosition() {
+        int chunkX = Math.floorDiv((int) position.x, 16);
+        int chunkY = Math.floorDiv((int) position.y, 16);
+        int chunkZ = Math.floorDiv((int) position.z, 16);
+        return new ChunkCoords(chunkX, chunkY, chunkZ);
     }
 
-    @Override
-    public int hashCode() {
-        return uuid.hashCode();
+    public Chunk getChunk() {
+        return chunk;
     }
 
     @Override
@@ -63,6 +64,7 @@ public class BetterEntity extends Entity implements NbtSerializable, IRenderable
         nbt.put("velocity", NbtUtil.serializeVector3(velocity));
         nbt.put("onceVelocity", NbtUtil.serializeVector3(onceVelocity));
         nbt.put("localBoundingBox", NbtUtil.serializeBoundingBox(localBoundingBox));
+        nbt.putBoolean("savable", savable);
     }
 
     @Override
@@ -85,7 +87,12 @@ public class BetterEntity extends Entity implements NbtSerializable, IRenderable
         velocity = NbtUtil.deserializeVector3(nbt.get("velocity"));
         onceVelocity = NbtUtil.deserializeVector3(nbt.get("onceVelocity"));
         localBoundingBox = NbtUtil.deserializeBoundingBox(nbt.get("localBoundingBox"));
+        savable = nbt.getBoolean("savable");
     }
 
+    @Override
+    public int hashCode() {
+        return uuid.hashCode();
+    }
 
 }

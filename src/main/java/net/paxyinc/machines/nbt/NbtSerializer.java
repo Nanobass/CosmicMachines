@@ -1,11 +1,6 @@
 package net.paxyinc.machines.nbt;
 
-import net.querz.nbt.io.NBTInput;
-import net.querz.nbt.io.NBTOutput;
-import net.querz.nbt.io.NBTSerializer;
 import net.querz.nbt.tag.CompoundTag;
-import net.querz.nbt.tag.Tag;
-import org.checkerframework.checker.units.qual.C;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -19,12 +14,22 @@ public class NbtSerializer {
         return outputTag;
     }
 
-    public static <T extends NbtSerializable> T read(CompoundTag tag) throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        String className = tag.getString("class");
-        Class<? extends NbtSerializable> clazz = (Class<? extends NbtSerializable>) Class.forName(className);
-        T object = (T) clazz.getDeclaredConstructor().newInstance();
-        object.read(tag);
-        return object;
+    public static <T extends NbtSerializable> T read(CompoundTag tag) {
+        try {
+            String className = tag.getString("class");
+            Class<? extends NbtSerializable> clazz = (Class<? extends NbtSerializable>) Class.forName(className);
+            T object = (T) clazz.getDeclaredConstructor().newInstance();
+            object.read(tag);
+            return object;
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Class Not Found", e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("No 0-Arg Constructor", e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Constructor not Accessible", e);
+        } catch (InvocationTargetException | InstantiationException ignored) {
+            return null;
+        }
     }
 
 }

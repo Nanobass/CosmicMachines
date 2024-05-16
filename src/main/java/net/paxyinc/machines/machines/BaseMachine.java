@@ -1,14 +1,15 @@
 package net.paxyinc.machines.machines;
 
 import finalforeach.cosmicreach.constants.Direction;
-import finalforeach.cosmicreach.world.Zone;
-import net.paxyinc.machines.entities.*;
+import net.paxyinc.machines.entities.FunctionalBlock;
+import net.paxyinc.machines.entities.system.EnergyStorage;
+import net.paxyinc.machines.entities.system.IEnergyConsumer;
+import net.paxyinc.machines.entities.system.SideType;
 import net.querz.nbt.tag.CompoundTag;
 
-import java.util.HashMap;
 import java.util.Map;
 
-public class BaseMachine extends TileEntity implements IEnergyConsumer {
+public class BaseMachine extends FunctionalBlock implements IEnergyConsumer {
 
     protected EnergyStorage battery;
     protected Map<Direction, SideType> energySides = SideType.createSideTypes(SideType.Input);
@@ -34,17 +35,17 @@ public class BaseMachine extends TileEntity implements IEnergyConsumer {
     }
 
     @Override
-    public void onTick(Zone zone) {
-        super.onTick(zone);
+    public void onTick() {
+        super.onTick();
         int canProduce = battery.produce(energyNeededToTick, false);
         if(canProduce >= energyNeededToTick) {
             battery.produce(canProduce, true);
-            onPoweredTick(zone);
+            onPoweredTick();
         }
 
     }
 
-    public void onPoweredTick(Zone zone) {
+    public void onPoweredTick() {
         System.out.println("I'M POWERED @" + energyNeededToTick + "SF/T " + battery.available() + "/" + battery.maximum() + " SF");
     }
 

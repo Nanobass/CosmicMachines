@@ -1,6 +1,8 @@
 package net.paxyinc.machines.item.inventories;
 
-import net.paxyinc.machines.item.*;
+import net.paxyinc.machines.item.Item;
+import net.paxyinc.machines.item.ItemInventory;
+import net.paxyinc.machines.item.ItemSlot;
 import net.paxyinc.machines.item.renderers.PlayerInventoryRenderer;
 
 import java.util.List;

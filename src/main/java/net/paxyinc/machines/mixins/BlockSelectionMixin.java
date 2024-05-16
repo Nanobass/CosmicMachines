@@ -21,7 +21,6 @@ import finalforeach.cosmicreach.world.BlockSelection;
 import finalforeach.cosmicreach.world.Chunk;
 import finalforeach.cosmicreach.world.Zone;
 import net.paxyinc.machines.entities.ItemEntity;
-import net.paxyinc.machines.entities.TileEntityRegistry;
 import net.paxyinc.machines.interfaces.ZoneInterface;
 import net.paxyinc.machines.item.Item;
 import net.paxyinc.machines.item.ItemRegistry;
@@ -35,8 +34,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(BlockSelection.class)
 public abstract class BlockSelectionMixin {
 
-    @Shadow
-    public static ShapeRenderer shapeRenderer = new ShapeRenderer();
+    @Shadow public static ShapeRenderer shapeRenderer = new ShapeRenderer();
     @Shadow public static boolean enabled;
     @Shadow private BlockState lastSelectedBlockState;
     @Shadow private static BlockState selectedBlockState;
@@ -208,7 +206,7 @@ public abstract class BlockSelectionMixin {
 
             if (breakingBlockPos != null && breakPressed) {
                 Identifier blockId = Identifier.fromString(breakingBlockPos.getBlockState().getBlockId());
-                zi.onBlockBroken(zone, breakingBlockPos, timeSinceBlockModify);
+                zi.onBlockBroken(breakingBlockPos, timeSinceBlockModify);
                 this.breakBlock(zone, breakingBlockPos, this.timeSinceBlockModify);
                 Item item = ItemRegistry.allItems.access().get(blockId);
                 // TODO spawning item here
@@ -237,12 +235,12 @@ public abstract class BlockSelectionMixin {
                     // TODO place block here
                     if(slot.take(1)) {
                         this.placeBlock(zone, targetBlockState, placingBlockPos, this.timeSinceBlockModify);
-                        zi.onBlockPlaced(zone, targetBlockState, placingBlockPos, timeSinceBlockModify);
+                        zi.onBlockPlaced(placingBlockPos, targetBlockState, timeSinceBlockModify);
                     }
                 }
             } else if (breakingBlockPos != null && (interactJustPressed || placePressed)) {
                 this.interactWith(zone, breakingBlockPos, interactJustPressed, placePressed, this.timeSinceBlockModify);
-                zi.onBlockInteract(zone, breakingBlockPos, InGame.getLocalPlayer(), timeSinceBlockModify);
+                zi.onBlockInteract(breakingBlockPos, InGame.getLocalPlayer(), timeSinceBlockModify);
                 this.timeSinceBlockModify = 0.25;
             }
 

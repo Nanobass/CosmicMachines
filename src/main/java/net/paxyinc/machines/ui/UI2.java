@@ -16,9 +16,8 @@ import finalforeach.cosmicreach.settings.Controls;
 import finalforeach.cosmicreach.ui.Crosshair;
 import finalforeach.cosmicreach.ui.UI;
 import finalforeach.cosmicreach.ui.debug.DebugInfo;
-import net.paxyinc.machines.item.*;
-import net.paxyinc.machines.item.inventories.MouseInventory;
-import net.paxyinc.machines.item.inventories.PlayerInventory;
+import net.paxyinc.machines.item.IItemInventoryRenderer;
+import net.paxyinc.machines.item.ItemInventory;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;

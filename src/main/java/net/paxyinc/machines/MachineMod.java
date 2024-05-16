@@ -1,7 +1,6 @@
 package net.paxyinc.machines;
 
 import dev.crmodders.flux.api.block.IModBlock;
-import dev.crmodders.flux.api.events.GameEvents;
 import dev.crmodders.flux.registry.FluxRegistries;
 import dev.crmodders.flux.registry.registries.AccessableRegistry;
 import dev.crmodders.flux.tags.Identifier;
@@ -9,8 +8,6 @@ import finalforeach.cosmicreach.blocks.Block;
 import net.fabricmc.api.ModInitializer;
 import net.paxyinc.machines.content.blocks.AutoSmelterBlock;
 import net.paxyinc.machines.content.blocks.CableBlock;
-import net.paxyinc.machines.entities.IModTileEntity;
-import net.paxyinc.machines.entities.TileEntityRegistry;
 import net.paxyinc.machines.item.Item;
 import net.paxyinc.machines.item.ItemRegistry;
 import net.paxyinc.machines.item.items.BlockItem;
@@ -40,11 +37,6 @@ public class MachineMod implements ModInitializer {
 
     public void onFluxPostInit() {
         AccessableRegistry<IModBlock> blocks = FluxRegistries.BLOCKS.access();
-        for(Identifier blockId : blocks.getRegisteredNames()) {
-            if(blocks.get(blockId) instanceof IModTileEntity tileEntity) {
-                TileEntityRegistry.BLOCK_TILE_ENTITY_FACTORIES.register(blockId, tileEntity.getTileEntityFactory());
-            }
-        }
 
         Map<Block, String> reverseNameLookup = new HashMap<>();
         for(var entry : Block.blocksByName.entrySet()) {

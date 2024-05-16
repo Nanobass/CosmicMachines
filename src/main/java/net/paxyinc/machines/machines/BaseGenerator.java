@@ -1,14 +1,16 @@
 package net.paxyinc.machines.machines;
 
 import finalforeach.cosmicreach.constants.Direction;
-import finalforeach.cosmicreach.world.Zone;
-import net.paxyinc.machines.entities.*;
+import net.paxyinc.machines.entities.FunctionalBlock;
+import net.paxyinc.machines.entities.system.EnergyStorage;
+import net.paxyinc.machines.entities.system.IEnergyConsumer;
+import net.paxyinc.machines.entities.system.IEnergyProducer;
+import net.paxyinc.machines.entities.system.SideType;
 import net.querz.nbt.tag.CompoundTag;
 
-import java.util.HashMap;
 import java.util.Map;
 
-public class BaseGenerator extends TileEntity implements IEnergyProducer {
+public class BaseGenerator extends FunctionalBlock implements IEnergyProducer {
 
     protected EnergyStorage battery;
     protected Map<Direction, SideType> energySides = SideType.createSideTypes(SideType.Output);
@@ -38,17 +40,17 @@ public class BaseGenerator extends TileEntity implements IEnergyProducer {
     }
 
     @Override
-    public void onTick(Zone zone) {
-        super.onTick(zone);
+    public void onTick() {
+        super.onTick();
         int canProduce, canConsume;
 
         if(canGenerate()) {
             battery.consume(energyProducedWhenTicked, true);
         }
 
-        for(Map.Entry<Direction, TileEntity> entry : neighbors.entrySet()) {
+        for(Map.Entry<Direction, FunctionalBlock> entry : neighbors.entrySet()) {
             Direction face = entry.getKey();
-            TileEntity neighbor = entry.getValue();
+            FunctionalBlock neighbor = entry.getValue();
             if(neighbor instanceof IEnergyConsumer consumer) {
                 canConsume = consumer.consume(face, battery.available(), false);
                 canProduce = produce(face, Math.min(canConsume, battery.maxProduce), false);

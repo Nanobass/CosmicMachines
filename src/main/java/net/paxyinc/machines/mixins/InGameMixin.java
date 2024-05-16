@@ -7,26 +7,25 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import finalforeach.cosmicreach.BlockGame;
 import finalforeach.cosmicreach.GameSingletons;
-import finalforeach.cosmicreach.entities.Entity;
 import finalforeach.cosmicreach.entities.Player;
 import finalforeach.cosmicreach.gamestates.GameState;
 import finalforeach.cosmicreach.gamestates.InGame;
-import finalforeach.cosmicreach.gamestates.LoadingGame;
 import finalforeach.cosmicreach.gamestates.PauseMenu;
 import finalforeach.cosmicreach.io.SaveLocation;
 import finalforeach.cosmicreach.lang.Lang;
 import finalforeach.cosmicreach.settings.Controls;
 import finalforeach.cosmicreach.settings.GraphicsSettings;
-import finalforeach.cosmicreach.ui.*;
+import finalforeach.cosmicreach.ui.FontRenderer;
+import finalforeach.cosmicreach.ui.HorizontalAnchor;
+import finalforeach.cosmicreach.ui.UI;
+import finalforeach.cosmicreach.ui.VerticalAnchor;
 import finalforeach.cosmicreach.world.*;
 import net.paxyinc.machines.entities.BetterEntity;
 import net.paxyinc.machines.entities.IRenderableEntity;
 import net.paxyinc.machines.entities.ItemEntity;
 import net.paxyinc.machines.interfaces.WorldInterface;
 import net.paxyinc.machines.interfaces.ZoneInterface;
-import net.paxyinc.machines.io.AdvancedEntitySaveSystem;
 import net.paxyinc.machines.item.inventories.PlayerInventory;
 import net.paxyinc.machines.ui.UI2;
 import org.spongepowered.asm.mixin.Mixin;
@@ -35,6 +34,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Mixin(value = InGame.class, priority = 500)
@@ -65,7 +65,9 @@ public abstract class InGameMixin extends GameState {
     public void unloadWorld() {
         // kick locale player TODO change this
         WorldInterface wi = (WorldInterface) InGame.world;
-        wi.unloadPlayer(LOCAL_PLAYER_UUID);
+        for(UUID playerUUID : wi.getPlayers().keySet()) {
+            wi.unloadPlayer(playerUUID);
+        }
         setLocalPlayer(null);
 
         // wait for world loader
@@ -136,6 +138,7 @@ public abstract class InGameMixin extends GameState {
     public void render(float partTick) {
         super.render(partTick);
         Zone playerZone = player.getZone(world);
+        ZoneInterface zi = (ZoneInterface) playerZone;
         if (GameState.currentGameState == GameState.IN_GAME) {
             player.update(playerZone);
             this.blockSelection.raycast(playerZone, rawWorldCamera);
@@ -144,7 +147,9 @@ public abstract class InGameMixin extends GameState {
 
         List<BetterEntity> despawn = new ArrayList<>();
 
-        for(Entity entity : playerZone.allEntities) {
+        // get player chunk here
+        for(Map.Entry<UUID, BetterEntity> entry : zi.getEntities().entrySet()) {
+            BetterEntity entity = entry.getValue();
             if(entity instanceof ItemEntity itemEntity) {
                 Vector3 diff = new Vector3(entity.position);
                 diff.sub(player.getEntity().position);
@@ -156,7 +161,7 @@ public abstract class InGameMixin extends GameState {
         }
 
         for(BetterEntity entity : despawn) {
-            entity.despawn(playerZone);
+            zi.killEntity(entity.uuid);
         }
 
         if (!this.firstFrame && Gdx.input.isKeyJustPressed(111)) {
@@ -172,7 +177,8 @@ public abstract class InGameMixin extends GameState {
         Sky.drawStars(rawWorldCamera);
         GameSingletons.zoneRenderer.render(playerZone, rawWorldCamera);
         this.blockSelection.render(rawWorldCamera);
-        for(Entity entity : playerZone.allEntities) {
+        for(Map.Entry<UUID, BetterEntity> entry : zi.getEntities().entrySet()) {
+            BetterEntity entity = entry.getValue();
             if(entity instanceof IRenderableEntity renderable) {
                 renderable.render(rawWorldCamera);
             }

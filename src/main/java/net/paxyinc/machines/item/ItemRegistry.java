@@ -1,6 +1,5 @@
 package net.paxyinc.machines.item;
 
-import dev.crmodders.flux.registry.FluxRegistries;
 import dev.crmodders.flux.registry.registries.DynamicRegistry;
 import dev.crmodders.flux.registry.registries.FreezingRegistry;
 

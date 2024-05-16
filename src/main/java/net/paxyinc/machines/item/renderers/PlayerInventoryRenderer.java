@@ -1,29 +1,20 @@
 package net.paxyinc.machines.item.renderers;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import dev.crmodders.flux.api.gui.base.BaseElement;
 import dev.crmodders.flux.api.gui.base.BaseText;
 import dev.crmodders.flux.ui.Component;
-import dev.crmodders.flux.ui.UIRenderer;
 import finalforeach.cosmicreach.ui.HorizontalAnchor;
 import finalforeach.cosmicreach.ui.VerticalAnchor;
-import net.paxyinc.machines.item.*;
+import net.paxyinc.machines.item.ItemInventory;
+import net.paxyinc.machines.item.ItemSlot;
 import net.paxyinc.machines.item.inventories.PlayerInventory;
 import net.paxyinc.machines.ui.BaseItemElement;
-import net.paxyinc.machines.ui.BaseRectangleElement;
 import net.paxyinc.machines.ui.InventoryBackgroundElement;
 import net.paxyinc.machines.util.BlockNameUtil;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
