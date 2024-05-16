@@ -1,5 +1,6 @@
 package net.paxyinc.machines.content.machines;
 
+import dev.crmodders.flux.tags.Identifier;
 import finalforeach.cosmicreach.entities.Player;
 import finalforeach.cosmicreach.world.Zone;
 import net.paxyinc.machines.entities.ItemEntity;
@@ -7,6 +8,8 @@ import net.paxyinc.machines.item.IEntityInventory;
 import net.paxyinc.machines.item.Item;
 import net.paxyinc.machines.item.ItemInventory;
 import net.paxyinc.machines.item.ItemSlot;
+import net.paxyinc.machines.item.crafting.ItemIngredient;
+import net.paxyinc.machines.item.crafting.Recipe;
 import net.paxyinc.machines.item.inventories.FurnaceInventory;
 import net.paxyinc.machines.machines.BaseMachine;
 import net.paxyinc.machines.ui.BlockInventoryUI;

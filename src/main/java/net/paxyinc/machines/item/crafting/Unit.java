@@ -1,5 +1,7 @@
 package net.paxyinc.machines.item.crafting;
 
-public class RecipeManager {
+public enum Unit {
+
+    PIECES, MILLILITERS
 
 }
