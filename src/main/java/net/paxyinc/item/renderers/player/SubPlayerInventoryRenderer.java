@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import dev.crmodders.flux.ui.Component;
-import net.paxyinc.item.ItemInventory;
 import net.paxyinc.item.inventories.PlayerInventory;
 import net.paxyinc.item.renderers.BasicInventoryRenderer;
 import net.paxyinc.ui.elements.BaseItemElement;

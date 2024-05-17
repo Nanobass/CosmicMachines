@@ -1,20 +1,16 @@
 package net.paxyinc.item.renderers.player;
 
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import dev.crmodders.flux.api.gui.base.BaseText;
 import dev.crmodders.flux.ui.Component;
 import finalforeach.cosmicreach.ui.HorizontalAnchor;
 import finalforeach.cosmicreach.ui.VerticalAnchor;
-import net.paxyinc.item.IItemInventoryRenderer;
-import net.paxyinc.item.ItemInventory;
 import net.paxyinc.item.ItemSlot;
 import net.paxyinc.item.inventories.PlayerInventory;
 import net.paxyinc.item.renderers.BasicInventoryRenderer;
 import net.paxyinc.ui.elements.BaseItemElement;
-import net.paxyinc.ui.elements.InventoryBackgroundElement;
 import net.paxyinc.util.BlockNameUtil;
 
 import java.util.List;
@@ -37,7 +33,7 @@ public class InGameHotbarRenderer extends BasicInventoryRenderer<PlayerInventory
 
         selectedItemText = new BaseText();
         selectedItemText.setAnchors(HorizontalAnchor.CENTERED, VerticalAnchor.BOTTOM_ALIGNED);
-        selectedItemText.setBounds(0, -64, 320, 48);
+        selectedItemText.setBounds(0, -84F, 320, 48);
         selectedItemText.text = "";
         selectedItemText.backgroundEnabled = false;
         selectedItemText.soundEnabled = false;

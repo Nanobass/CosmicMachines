@@ -10,7 +10,6 @@ import net.paxyinc.item.IItemInventoryRenderer;
 import net.paxyinc.item.ItemInventory;
 import net.paxyinc.item.ItemSlot;
 import net.paxyinc.ui.elements.BaseItemElement;
-import org.intellij.lang.annotations.JdkConstants;
 
 import java.util.ArrayList;
 import java.util.List;

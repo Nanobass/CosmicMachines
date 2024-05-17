@@ -6,7 +6,6 @@ import finalforeach.cosmicreach.gamestates.InGame;
 import net.paxyinc.entities.ItemEntity;
 import net.paxyinc.item.ItemInventory;
 import net.paxyinc.item.ItemSlot;
-import net.paxyinc.item.renderers.MouseInventoryRenderer;
 
 public class MouseInventory extends ItemInventory {
 

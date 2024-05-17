@@ -1,11 +1,9 @@
 package net.paxyinc.entities;
 
-import dev.crmodders.flux.tags.Identifier;
 import finalforeach.cosmicreach.entities.Entity;
 import finalforeach.cosmicreach.world.Chunk;
 import finalforeach.cosmicreach.world.ChunkCoords;
 import finalforeach.cosmicreach.world.RegionCoords;
-import net.paxyinc.nbt.Identifiable;
 import net.paxyinc.nbt.NbtSerializable;
 import net.paxyinc.util.NbtUtil;
 import net.querz.nbt.tag.CompoundTag;
@@ -17,6 +15,24 @@ public class BetterEntity extends Entity implements NbtSerializable {
     public UUID uuid = UUID.randomUUID();
     public transient Chunk chunk;
     public transient boolean savable = true;
+
+    public int health = 100;
+
+    public void hurt(int damage) {
+        health -= damage;
+    }
+
+    public void heal(int heal) {
+        health += heal;
+    }
+
+    public int health() {
+        return health;
+    }
+
+    public boolean dead() {
+        return health <= 0;
+    }
 
     public UUID uuid() {
         return uuid;
@@ -67,6 +83,7 @@ public class BetterEntity extends Entity implements NbtSerializable {
         nbt.put("onceVelocity", NbtUtil.serializeVector3(onceVelocity));
         nbt.put("localBoundingBox", NbtUtil.serializeBoundingBox(localBoundingBox));
         nbt.putBoolean("savable", savable);
+        nbt.putInt("health", health);
     }
 
     @Override
@@ -90,6 +107,7 @@ public class BetterEntity extends Entity implements NbtSerializable {
         onceVelocity = NbtUtil.deserializeVector3(nbt.get("onceVelocity"));
         localBoundingBox = NbtUtil.deserializeBoundingBox(nbt.get("localBoundingBox"));
         savable = nbt.getBoolean("savable");
+        health = nbt.getInt("health");
     }
 
     @Override

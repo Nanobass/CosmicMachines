@@ -3,18 +3,15 @@ package net.paxyinc.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Matrix4;
-import dev.crmodders.flux.tags.Identifier;
 import finalforeach.cosmicreach.blocks.BlockPosition;
 import finalforeach.cosmicreach.entities.Entity;
 import finalforeach.cosmicreach.world.Zone;
-import net.paxyinc.MachineMod;
 import net.paxyinc.interfaces.ZoneInterface;
 import net.paxyinc.item.AbstractItemList;
 import net.paxyinc.item.Item;
 import net.paxyinc.item.ItemStack;
 import net.querz.nbt.tag.CompoundTag;
 
-import javax.crypto.Mac;
 import java.util.ArrayList;
 import java.util.List;
 

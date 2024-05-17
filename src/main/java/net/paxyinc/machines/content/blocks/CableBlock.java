@@ -5,10 +5,10 @@ import dev.crmodders.flux.api.generators.BlockModelGenerator;
 import dev.crmodders.flux.api.resource.ResourceLocation;
 import dev.crmodders.flux.tags.Identifier;
 import net.paxyinc.MachineMod;
-import net.paxyinc.machines.content.Cable;
-import net.paxyinc.machines.content.models.CableModelGenerator;
 import net.paxyinc.entities.FunctionalBlock;
 import net.paxyinc.entities.IFunctionalModBlock;
+import net.paxyinc.machines.content.Cable;
+import net.paxyinc.machines.content.models.CableModelGenerator;
 
 import java.util.List;
 

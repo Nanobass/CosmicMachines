@@ -12,7 +12,6 @@ import net.paxyinc.MachineRegistries;
 import net.paxyinc.interfaces.PlayerInterface;
 import net.paxyinc.item.Item;
 import net.paxyinc.item.inventories.PlayerInventory;
-import net.paxyinc.item.renderers.player.InGameHotbarRenderer;
 
 public class GiveCommand implements Command {
 

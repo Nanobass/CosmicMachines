@@ -8,11 +8,11 @@ import dev.crmodders.flux.tags.Identifier;
 import finalforeach.cosmicreach.blocks.Block;
 import finalforeach.cosmicreach.gamestates.GameState;
 import net.fabricmc.api.ModInitializer;
-import net.paxyinc.machines.content.blocks.AutoSmelterBlock;
-import net.paxyinc.machines.content.blocks.CableBlock;
 import net.paxyinc.item.Item;
 import net.paxyinc.item.items.BlockItem;
 import net.paxyinc.item.loading.RegisterItems;
+import net.paxyinc.machines.content.blocks.AutoSmelterBlock;
+import net.paxyinc.machines.content.blocks.CableBlock;
 
 import java.util.HashMap;
 import java.util.Map;

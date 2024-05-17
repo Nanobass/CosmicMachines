@@ -6,6 +6,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import dev.crmodders.flux.tags.Identifier;
 import finalforeach.cosmicreach.gamestates.InGame;
 import net.paxyinc.MachineRegistries;
+import net.paxyinc.entities.BetterEntity;
 import net.paxyinc.interfaces.PlayerInterface;
 import net.paxyinc.item.Item;
 import net.paxyinc.item.inventories.PlayerInventory;
@@ -29,6 +30,7 @@ public class TestCommand implements Command {
             giveItem(source.getSource(), "cosmicmachines:cable", 64);
             giveItem(source.getSource(), "cosmicmachines:smelter", 64);
             giveItem(source.getSource(), "base:asphalt", 64);
+            ((BetterEntity) InGame.getLocalPlayer().getEntity()).hurt(25);
             return 1;
         });
     }

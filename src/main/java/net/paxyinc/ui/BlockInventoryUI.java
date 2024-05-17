@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import dev.crmodders.flux.ui.Component;
 import net.paxyinc.item.IItemInventoryRenderer;
-import net.paxyinc.item.ItemInventory;
 
 import java.util.List;
 

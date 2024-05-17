@@ -3,7 +3,6 @@ package net.paxyinc.mixins.io;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import finalforeach.cosmicreach.gamestates.PauseMenu;
 import finalforeach.cosmicreach.io.ChunkLoader;
 import finalforeach.cosmicreach.io.ChunkSaver;
 import finalforeach.cosmicreach.settings.GraphicsSettings;

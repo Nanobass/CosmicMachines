@@ -2,7 +2,6 @@ package net.paxyinc.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -10,17 +9,14 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.insertsoda.craterchat.CraterChat;
 import dev.crmodders.flux.ui.Component;
 import dev.crmodders.flux.ui.UIRenderer;
-import dev.crmodders.flux.ui.text.TextBatch;
 import finalforeach.cosmicreach.entities.Player;
 import finalforeach.cosmicreach.gamestates.GameState;
 import finalforeach.cosmicreach.gamestates.InGame;
-import finalforeach.cosmicreach.gamestates.PauseMenu;
 import finalforeach.cosmicreach.io.ChunkSaver;
 import finalforeach.cosmicreach.settings.Controls;
 import finalforeach.cosmicreach.ui.*;
 import finalforeach.cosmicreach.ui.debug.DebugInfo;
 import net.paxyinc.interfaces.PlayerInterface;
-import net.paxyinc.item.IEntityInventory;
 import net.paxyinc.item.IItemInventoryRenderer;
 import net.paxyinc.item.ItemInventory;
 import net.paxyinc.item.inventories.MouseInventory;
@@ -29,8 +25,6 @@ import net.paxyinc.item.renderers.MouseInventoryRenderer;
 import net.paxyinc.item.renderers.player.InGameHotbarRenderer;
 import net.paxyinc.item.renderers.player.PlayerInventoryRenderer;
 import net.paxyinc.item.renderers.player.SubPlayerInventoryRenderer;
-import net.paxyinc.mixins.InGameMixin;
-import net.paxyinc.mixins.io.ChunkSaverMixin;
 import net.paxyinc.ui.elements.BaseItemElement;
 import org.lwjgl.opengl.GL11;
 
@@ -50,6 +44,7 @@ public class UI2 extends UI {
 
     public static MouseInventoryRenderer mouseInventoryRenderer;
 
+    public static PlayerUI playerUI;
     public static PlayerInventory playerInventory;
     public static InGameHotbarRenderer playerHotbarRenderer = null;
 
@@ -100,11 +95,16 @@ public class UI2 extends UI {
         if(playerHotbarRenderer != null) {
             inGameOnlyUIs.remove(playerHotbarRenderer);
         }
+        if(playerUI != null) {
+            inGameOnlyUIs.remove(playerUI);
+        }
 
         PlayerInterface pi = (PlayerInterface) player;
         playerInventory = pi.getInventory();
         playerHotbarRenderer = new InGameHotbarRenderer(playerInventory);
         inGameOnlyUIs.add(playerHotbarRenderer);
+        playerUI = new PlayerUI(player);
+        inGameOnlyUIs.add(playerUI);
     }
 
     public UI2() {
