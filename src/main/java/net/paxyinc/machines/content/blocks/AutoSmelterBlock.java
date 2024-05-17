@@ -5,10 +5,10 @@ import dev.crmodders.flux.api.generators.BlockGenerator;
 import dev.crmodders.flux.api.generators.BlockModelGenerator;
 import dev.crmodders.flux.api.resource.ResourceLocation;
 import dev.crmodders.flux.tags.Identifier;
-import net.paxyinc.machines.MachineMod;
-import net.paxyinc.machines.content.machines.AutoSmelter;
-import net.paxyinc.machines.entities.FunctionalBlock;
-import net.paxyinc.machines.entities.IFunctionalModBlock;
+import net.paxyinc.MachineMod;
+import net.paxyinc.machines.content.AutoSmelter;
+import net.paxyinc.entities.FunctionalBlock;
+import net.paxyinc.entities.IFunctionalModBlock;
 
 import java.util.List;
 

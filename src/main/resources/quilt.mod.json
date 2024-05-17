@@ -23,8 +23,8 @@
     },
 
     "entrypoints": {
-      "main": "net.paxyinc.machines.MachineMod",
-      "craterchatplugin": "net.paxyinc.machines.MachinesCraterChatPlugin"
+      "main": "net.paxyinc.MachineMod",
+      "craterchatplugin": "net.paxyinc.MachinesCraterChatPlugin"
     },
 
     "depends": [

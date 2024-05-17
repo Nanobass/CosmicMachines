@@ -5,12 +5,12 @@ import dev.crmodders.flux.api.generators.BlockModelGenerator;
 import dev.crmodders.flux.api.resource.ResourceLocation;
 import dev.crmodders.flux.tags.Identifier;
 import finalforeach.cosmicreach.constants.Direction;
-import net.paxyinc.machines.util.DirectionUtil;
+import net.paxyinc.util.DirectionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.paxyinc.machines.util.DirectionUtil.ALL_DIRECTION_NAMES;
+import static net.paxyinc.util.DirectionUtil.ALL_DIRECTION_NAMES;
 
 public class CableModelGenerator extends BlockModelGenerator {
 
