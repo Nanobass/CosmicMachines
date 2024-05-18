@@ -17,6 +17,7 @@ public class BetterEntity extends Entity implements NbtSerializable {
     public transient boolean savable = true;
 
     public int health = 100;
+    public int oxygen = 100;
 
     public void hurt(int damage) {
         health -= damage;
@@ -24,10 +25,6 @@ public class BetterEntity extends Entity implements NbtSerializable {
 
     public void heal(int heal) {
         health += heal;
-    }
-
-    public int health() {
-        return health;
     }
 
     public boolean dead() {
@@ -84,6 +81,7 @@ public class BetterEntity extends Entity implements NbtSerializable {
         nbt.put("localBoundingBox", NbtUtil.serializeBoundingBox(localBoundingBox));
         nbt.putBoolean("savable", savable);
         nbt.putInt("health", health);
+        nbt.putInt("oxygen", oxygen);
     }
 
     @Override
@@ -108,6 +106,7 @@ public class BetterEntity extends Entity implements NbtSerializable {
         localBoundingBox = NbtUtil.deserializeBoundingBox(nbt.get("localBoundingBox"));
         savable = nbt.getBoolean("savable");
         health = nbt.getInt("health");
+        oxygen = nbt.getInt("oxygen");
     }
 
     @Override

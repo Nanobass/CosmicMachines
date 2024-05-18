@@ -33,7 +33,7 @@ public class InGameHotbarRenderer extends BasicInventoryRenderer<PlayerInventory
 
         selectedItemText = new BaseText();
         selectedItemText.setAnchors(HorizontalAnchor.CENTERED, VerticalAnchor.BOTTOM_ALIGNED);
-        selectedItemText.setBounds(0, -84F, 320, 48);
+        selectedItemText.setBounds(0, -104F, 320, 48);
         selectedItemText.text = "";
         selectedItemText.backgroundEnabled = false;
         selectedItemText.soundEnabled = false;
